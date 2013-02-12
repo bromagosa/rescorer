@@ -1,4 +1,85 @@
 smalltalk.addPackage('Rescorer', {});
+smalltalk.addClass('NoteController', smalltalk.Object, ['noteDictionary'], 'Rescorer');
+smalltalk.addMethod(
+"_fKeyNotes",
+smalltalk.method({
+selector: "fKeyNotes",
+category: 'not yet classified',
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
+},
+args: [],
+source: "fKeyNotes\x0a\x09^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C)",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_gKeyNotes",
+smalltalk.method({
+selector: "gKeyNotes",
+category: 'not yet classified',
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A")];
+},
+args: [],
+source: "gKeyNotes\x0a\x09^ #(#C #D #E #F #G #A #B #C #D #E #F #G #A)",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_noteAtPosition_key_",
+smalltalk.method({
+selector: "noteAtPosition:key:",
+category: 'not yet classified',
+fn: function (aNumber,aKeySymbol){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteDictionary",[]),"_at_",[aKeySymbol]),"_at_",[aNumber]);
+return $1;
+},
+args: ["aNumber", "aKeySymbol"],
+source: "noteAtPosition: aNumber key: aKeySymbol\x0a\x09^ (self noteDictionary at: aKeySymbol) at: aNumber",
+messageSends: ["at:", "noteDictionary"],
+referencedClasses: []
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_noteDictionary",
+smalltalk.method({
+selector: "noteDictionary",
+category: 'not yet classified',
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@noteDictionary"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("G"),smalltalk.send(self,"_gKeyNotes",[])]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("F"),smalltalk.send(self,"_fKeyNotes",[])]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@noteDictionary"]=$4;
+$1=self["@noteDictionary"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "noteDictionary\x0a\x09^ noteDictionary \x0a    \x09\x09ifNil: [ noteDictionary := \x0a            \x09Dictionary new \x0a                \x09at: #G put: self gKeyNotes;\x0a                    at: #F put: self fKeyNotes;\x0a                    yourself ]",
+messageSends: ["ifNil:", "at:put:", "gKeyNotes", "new", "fKeyNotes", "yourself"],
+referencedClasses: ["Dictionary"]
+}),
+smalltalk.NoteController);
+
+
+
 smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition'], 'Rescorer');
 smalltalk.addMethod(
 "_currentNotePosition",
@@ -34,7 +115,7 @@ var self=this;
 var $2,$1;
 $2=self["@keyName"];
 if(($receiver = $2) == nil || $receiver == undefined){
-self["@keyName"]=smalltalk.symbolFor("G");
+self["@keyName"]=smalltalk.symbolFor("F");
 $1=self["@keyName"];
 } else {
 $1=$2;
@@ -42,7 +123,7 @@ $1=$2;
 return $1;
 },
 args: [],
-source: "keyName\x0a\x09^ keyName ifNil: [ keyName := #G ]",
+source: "keyName\x0a\x09^ keyName ifNil: [ keyName := #F ]",
 messageSends: ["ifNil:"],
 referencedClasses: []
 }),
@@ -57,13 +138,13 @@ fn: function (html){
 var self=this;
 var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
-smalltalk.send($1,"_class_",["image key"]);
+smalltalk.send($1,"_class_",[smalltalk.send("image key ","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])])]);
 $2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])]),"__comma",[".svg"])]);
 self["@key"]=$2;
 return self},
 args: ["html"],
-source: "renderKeyOn: html\x0akey := \x0a    html img\x0a    \x09class: 'image key'; \x0a\x09\x09src: 'images/' , self keyName asString , '.svg'.",
-messageSends: ["class:", "img", "src:", ",", "asString", "keyName"],
+source: "renderKeyOn: html\x0akey := \x0a    html img\x0a    \x09class: 'image key ' , self keyName asString; \x0a\x09\x09src: 'images/' , self keyName asString , '.svg'.",
+messageSends: ["class:", ",", "asString", "keyName", "img", "src:"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -166,14 +247,15 @@ category: 'rendering',
 fn: function (){
 var self=this;
 self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
+smalltalk.send(console,"_log_",[smalltalk.send(smalltalk.send((smalltalk.NoteController || NoteController),"_new",[]),"_noteAtPosition_key_",[self["@currentNotePosition"],smalltalk.send(self,"_keyName",[])])]);
 smalltalk.send(self["@note"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderNoteOn_",[html]);
 })]);
 return self},
 args: [],
-source: "updateNote\x0a\x09currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.\x0a\x09note contents: [:html | self renderNoteOn: html]",
-messageSends: ["atRandom", "remove:", "to:", "contents:", "renderNoteOn:"],
-referencedClasses: []
+source: "updateNote\x0a\x09currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.\x0a    console log:(NoteController new noteAtPosition: currentNotePosition key: self keyName).\x0a\x09note contents: [:html | self renderNoteOn: html]",
+messageSends: ["atRandom", "remove:", "to:", "log:", "noteAtPosition:key:", "keyName", "new", "contents:", "renderNoteOn:"],
+referencedClasses: ["NoteController"]
 }),
 smalltalk.SheetWidget);
 

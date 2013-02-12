@@ -1,4 +1,65 @@
 smalltalk.addPackage('Rescorer', {});
+smalltalk.addClass('NoteController', smalltalk.Object, ['noteDictionary'], 'Rescorer');
+smalltalk.addMethod(
+"_fKeyNotes",
+smalltalk.method({
+selector: "fKeyNotes",
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
+}
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_gKeyNotes",
+smalltalk.method({
+selector: "gKeyNotes",
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A")];
+}
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_noteAtPosition_key_",
+smalltalk.method({
+selector: "noteAtPosition:key:",
+fn: function (aNumber,aKeySymbol){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteDictionary",[]),"_at_",[aKeySymbol]),"_at_",[aNumber]);
+return $1;
+}
+}),
+smalltalk.NoteController);
+
+smalltalk.addMethod(
+"_noteDictionary",
+smalltalk.method({
+selector: "noteDictionary",
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@noteDictionary"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("G"),smalltalk.send(self,"_gKeyNotes",[])]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("F"),smalltalk.send(self,"_fKeyNotes",[])]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@noteDictionary"]=$4;
+$1=self["@noteDictionary"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.NoteController);
+
+
+
 smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition'], 'Rescorer');
 smalltalk.addMethod(
 "_currentNotePosition",
@@ -28,7 +89,7 @@ var self=this;
 var $2,$1;
 $2=self["@keyName"];
 if(($receiver = $2) == nil || $receiver == undefined){
-self["@keyName"]=smalltalk.symbolFor("G");
+self["@keyName"]=smalltalk.symbolFor("F");
 $1=self["@keyName"];
 } else {
 $1=$2;
@@ -46,7 +107,7 @@ fn: function (html){
 var self=this;
 var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
-smalltalk.send($1,"_class_",["image key"]);
+smalltalk.send($1,"_class_",[smalltalk.send("image key ","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])])]);
 $2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])]),"__comma",[".svg"])]);
 self["@key"]=$2;
 return self}
@@ -135,6 +196,7 @@ selector: "updateNote",
 fn: function (){
 var self=this;
 self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
+smalltalk.send(console,"_log_",[smalltalk.send(smalltalk.send((smalltalk.NoteController || NoteController),"_new",[]),"_noteAtPosition_key_",[self["@currentNotePosition"],smalltalk.send(self,"_keyName",[])])]);
 smalltalk.send(self["@note"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderNoteOn_",[html]);
 })]);

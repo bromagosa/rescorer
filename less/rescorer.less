@@ -5,7 +5,7 @@
 @lightGreen: #d4ff2a;
 @darkGreen: #aad400;
 @white: #edfff6;
-@black: #080a00;
+@black: #0d1100;
 
 .bar { background-color: @lightGreen }
 
@@ -89,9 +89,15 @@ body { font-family: 'Permanent Marker', cursive }
 
 .key {
 	position: absolute;
-	height: 90%;
-	top: 8%;
 	left: 10%;
+	&.G {
+		height: 90%;
+		top: 8% 
+	}
+	&.F { 
+		height: 40%;
+		top: 24% 
+	}
 }
 
 .note {

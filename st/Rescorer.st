@@ -1,4 +1,31 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
+Object subclass: #NoteController
+	instanceVariableNames: 'noteDictionary'
+	package: 'Rescorer'!
+
+!NoteController methodsFor: 'not yet classified'!
+
+fKeyNotes
+	^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C)
+!
+
+gKeyNotes
+	^ #(#C #D #E #F #G #A #B #C #D #E #F #G #A)
+!
+
+noteAtPosition: aNumber key: aKeySymbol
+	^ (self noteDictionary at: aKeySymbol) at: aNumber
+!
+
+noteDictionary
+	^ noteDictionary 
+    		ifNil: [ noteDictionary := 
+            	Dictionary new 
+                	at: #G put: self gKeyNotes;
+                    at: #F put: self fKeyNotes;
+                    yourself ]
+! !
+
 Widget subclass: #SheetWidget
 	instanceVariableNames: 'lines key sheet keyName note currentNotePosition'
 	package: 'Rescorer'!
@@ -10,7 +37,7 @@ currentNotePosition
 !
 
 keyName
-	^ keyName ifNil: [ keyName := #G ]
+	^ keyName ifNil: [ keyName := #F ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -18,7 +45,7 @@ keyName
 renderKeyOn: html
 key := 
     html img
-    	class: 'image key'; 
+    	class: 'image key ' , self keyName asString; 
 		src: 'images/' , self keyName asString , '.svg'.
 !
 
@@ -57,6 +84,7 @@ renderOn: html
 
 updateNote
 	currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.
+    console log:(NoteController new noteAtPosition: currentNotePosition key: self keyName).
 	note contents: [:html | self renderNoteOn: html]
 ! !
 
