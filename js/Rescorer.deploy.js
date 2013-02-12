@@ -1,5 +1,92 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('NoteController', smalltalk.Object, ['noteDictionary'], 'Rescorer');
+smalltalk.addClass('Note', smalltalk.Object, ['position', 'symbol', 'octave'], 'Rescorer');
+smalltalk.addMethod(
+"_octave",
+smalltalk.method({
+selector: "octave",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@octave"];
+return $1;
+}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_octave_",
+smalltalk.method({
+selector: "octave:",
+fn: function (aNumber){
+var self=this;
+self["@octave"]=aNumber;
+return self}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_position",
+smalltalk.method({
+selector: "position",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@position"];
+return $1;
+}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_position_",
+smalltalk.method({
+selector: "position:",
+fn: function (aNumber){
+var self=this;
+self["@position"]=aNumber;
+return self}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_soundFile",
+smalltalk.method({
+selector: "soundFile",
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_symbol",[]),"_asString",[]),"__comma",[smalltalk.send(smalltalk.send(self,"_octave",[]),"_asString",[])]),"__comma",[".wav"]);
+return $1;
+}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_symbol",
+smalltalk.method({
+selector: "symbol",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@symbol"];
+return $1;
+}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_symbol_",
+smalltalk.method({
+selector: "symbol:",
+fn: function (aString){
+var self=this;
+self["@symbol"]=aString;
+return self}
+}),
+smalltalk.Note);
+
+
+smalltalk.Note.klass.iVarNames = ['noteDictionary','octaveDictionary'];
 smalltalk.addMethod(
 "_fKeyNotes",
 smalltalk.method({
@@ -9,7 +96,18 @@ var self=this;
 return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
 }
 }),
-smalltalk.NoteController);
+smalltalk.Note.klass);
+
+smalltalk.addMethod(
+"_fKeyOctaves",
+smalltalk.method({
+selector: "fKeyOctaves",
+fn: function (){
+var self=this;
+return [(1), (1), (1), (1), (1), (2), (2), (2), (2), (2), (2), (2), (3)];
+}
+}),
+smalltalk.Note.klass);
 
 smalltalk.addMethod(
 "_gKeyNotes",
@@ -20,20 +118,18 @@ var self=this;
 return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A")];
 }
 }),
-smalltalk.NoteController);
+smalltalk.Note.klass);
 
 smalltalk.addMethod(
-"_noteAtPosition_key_",
+"_gKeyOctaves",
 smalltalk.method({
-selector: "noteAtPosition:key:",
-fn: function (aNumber,aKeySymbol){
+selector: "gKeyOctaves",
+fn: function (){
 var self=this;
-var $1;
-$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteDictionary",[]),"_at_",[aKeySymbol]),"_at_",[aNumber]);
-return $1;
+return [(3), (3), (3), (3), (3), (3), (3), (4), (4), (4), (4), (4), (4)];
 }
 }),
-smalltalk.NoteController);
+smalltalk.Note.klass);
 
 smalltalk.addMethod(
 "_noteDictionary",
@@ -56,8 +152,47 @@ $1=$2;
 return $1;
 }
 }),
-smalltalk.NoteController);
+smalltalk.Note.klass);
 
+smalltalk.addMethod(
+"_octaveDictionary",
+smalltalk.method({
+selector: "octaveDictionary",
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@octaveDictionary"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("G"),smalltalk.send(self,"_gKeyOctaves",[])]);
+smalltalk.send($3,"_at_put_",[smalltalk.symbolFor("F"),smalltalk.send(self,"_fKeyOctaves",[])]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@octaveDictionary"]=$4;
+$1=self["@octaveDictionary"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.Note.klass);
+
+smalltalk.addMethod(
+"_position_key_",
+smalltalk.method({
+selector: "position:key:",
+fn: function (aNumber,aKeySymbol){
+var self=this;
+var $2,$3,$1;
+$2=smalltalk.send(self,"_new",[]);
+smalltalk.send($2,"_symbol_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteDictionary",[]),"_at_",[aKeySymbol]),"_at_",[aNumber])]);
+smalltalk.send($2,"_position_",[aNumber]);
+$3=smalltalk.send($2,"_octave_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_octaveDictionary",[]),"_at_",[aKeySymbol]),"_at_",[aNumber])]);
+$1=$3;
+return $1;
+}
+}),
+smalltalk.Note.klass);
 
 
 smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition'], 'Rescorer');
@@ -89,7 +224,7 @@ var self=this;
 var $2,$1;
 $2=self["@keyName"];
 if(($receiver = $2) == nil || $receiver == undefined){
-self["@keyName"]=smalltalk.symbolFor("F");
+self["@keyName"]=smalltalk.symbolFor("G");
 $1=self["@keyName"];
 } else {
 $1=$2;

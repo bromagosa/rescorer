@@ -1,20 +1,65 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
-Object subclass: #NoteController
-	instanceVariableNames: 'noteDictionary'
+Object subclass: #Note
+	instanceVariableNames: 'position symbol octave'
 	package: 'Rescorer'!
 
-!NoteController methodsFor: 'not yet classified'!
+!Note methodsFor: 'accessing'!
+
+octave
+	^ octave
+!
+
+octave: aNumber
+	octave := aNumber
+!
+
+position
+	^ position
+!
+
+position: aNumber
+	position := aNumber
+!
+
+soundFile
+	^ self symbol asString , self octave asString , '.wav'
+!
+
+symbol
+	^ symbol
+!
+
+symbol: aString
+	symbol := aString
+! !
+
+Note class instanceVariableNames: 'noteDictionary octaveDictionary'!
+
+!Note class methodsFor: 'instance creation'!
+
+position: aNumber key: aKeySymbol
+	^ self new 
+    	symbol: ((self noteDictionary at: aKeySymbol) at: aNumber);
+    	position: aNumber;
+		octave: ((self octaveDictionary at: aKeySymbol) at: aNumber)
+! !
+
+!Note class methodsFor: 'not yet classified'!
 
 fKeyNotes
 	^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C)
+!
+
+fKeyOctaves
+	^ #(1 1 1 1 1 2 2 2 2 2 2 2 3)
 !
 
 gKeyNotes
 	^ #(#C #D #E #F #G #A #B #C #D #E #F #G #A)
 !
 
-noteAtPosition: aNumber key: aKeySymbol
-	^ (self noteDictionary at: aKeySymbol) at: aNumber
+gKeyOctaves
+	^ #(3 3 3 3 3 3 3 4 4 4 4 4 4)
 !
 
 noteDictionary
@@ -23,6 +68,15 @@ noteDictionary
             	Dictionary new 
                 	at: #G put: self gKeyNotes;
                     at: #F put: self fKeyNotes;
+                    yourself ]
+!
+
+octaveDictionary
+	^ octaveDictionary 
+    		ifNil: [ octaveDictionary := 
+            	Dictionary new 
+                	at: #G put: self gKeyOctaves;
+                    at: #F put: self fKeyOctaves;
                     yourself ]
 ! !
 
@@ -37,7 +91,7 @@ currentNotePosition
 !
 
 keyName
-	^ keyName ifNil: [ keyName := #F ]
+	^ keyName ifNil: [ keyName := #G ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
