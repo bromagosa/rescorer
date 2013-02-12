@@ -1,5 +1,24 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName'], 'Rescorer');
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition'], 'Rescorer');
+smalltalk.addMethod(
+"_currentNotePosition",
+smalltalk.method({
+selector: "currentNotePosition",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@currentNotePosition"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@currentNotePosition"]=smalltalk.send((13),"_atRandom",[]);
+$1=self["@currentNotePosition"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.SheetWidget);
+
 smalltalk.addMethod(
 "_keyName",
 smalltalk.method({
@@ -41,12 +60,37 @@ selector: "renderLinesOn:",
 fn: function (html){
 var self=this;
 var $1,$2;
-self["@lines"]=smalltalk.send(smalltalk.send((1),"_to_",[(5)]),"_collect_",[(function(index){
+self["@lines"]=smalltalk.send(smalltalk.send((1),"_to_",[(7)]),"_collect_",[(function(index){
 $1=smalltalk.send(html,"_hr",[]);
-smalltalk.send($1,"_class_",[smalltalk.send("line ","__comma",[smalltalk.send(index,"_asString",[])])]);
-$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("top: ","__comma",[smalltalk.send(smalltalk.send(index,"__star",[smalltalk.send((100),"__slash",[(6)])]),"_asString",[])]),"__comma",["%;"])]);
+smalltalk.send($1,"_class_",[smalltalk.send("line i","__comma",[smalltalk.send(index,"_asString",[])])]);
+$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(index,"__star",[(12.5)]),"_asString",[])]),"__comma",["%;"])]);
 return $2;
 })]);
+return self}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_renderNoteOn_",
+smalltalk.method({
+selector: "renderNoteOn:",
+fn: function (html){
+var self=this;
+var $1,$2,$6,$5,$4,$3,$7;
+$1=smalltalk.send(html,"_img",[]);
+smalltalk.send($1,"_class_",[smalltalk.send("image note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
+$2=$1;
+$6=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
+if(smalltalk.assert($6)){
+$5="-slashed";
+} else {
+$5="";
+};
+$4=smalltalk.send("images/note","__comma",[$5]);
+$3=smalltalk.send($4,"__comma",[".svg"]);
+smalltalk.send($2,"_src_",[$3]);
+$7=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]),"_asString",[])]),"__comma",["%;"])]);
+smalltalk.send(console,"_log_",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])]);
 return self}
 }),
 smalltalk.SheetWidget);
@@ -57,17 +101,27 @@ smalltalk.method({
 selector: "renderOn:",
 fn: function (html){
 var self=this;
-var $1,$3,$4,$2;
-$1=smalltalk.send(html,"_div",[]);
-smalltalk.send($1,"_class_",["sheet-container"]);
-$2=smalltalk.send($1,"_with_",[(function(){
+var $1,$2,$3,$5,$6,$4;
+$1=smalltalk.send(html,"_a",[]);
+smalltalk.send($1,"_with_",["update"]);
+smalltalk.send($1,"_style_",["position:fixed"]);
+$2=smalltalk.send($1,"_onClick_",[(function(){
+return smalltalk.send(self,"_updateNote",[]);
+})]);
+$3=smalltalk.send(html,"_div",[]);
+smalltalk.send($3,"_class_",["sheet-container"]);
+$4=smalltalk.send($3,"_with_",[(function(){
 self["@sheet"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_class_",["sheet"]);
 self["@sheet"];
 return smalltalk.send(self["@sheet"],"_with_",[(function(){
-$3=self;
-smalltalk.send($3,"_renderKeyOn_",[html]);
-$4=smalltalk.send($3,"_renderLinesOn_",[html]);
-return $4;
+$5=self;
+smalltalk.send($5,"_renderKeyOn_",[html]);
+$6=smalltalk.send($5,"_renderLinesOn_",[html]);
+$6;
+self["@note"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+return smalltalk.send(self,"_renderNoteOn_",[html]);
+})]);
+return self["@note"];
 })]);
 })]);
 return self}
@@ -75,15 +129,16 @@ return self}
 smalltalk.SheetWidget);
 
 smalltalk.addMethod(
-"_sheet",
+"_updateNote",
 smalltalk.method({
-selector: "sheet",
+selector: "updateNote",
 fn: function (){
 var self=this;
-var $1;
-$1=self["@sheet"];
-return $1;
-}
+self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
+smalltalk.send(self["@note"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderNoteOn_",[html]);
+})]);
+return self}
 }),
 smalltalk.SheetWidget);
 

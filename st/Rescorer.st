@@ -1,16 +1,16 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines key sheet keyName'
+	instanceVariableNames: 'lines key sheet keyName note currentNotePosition'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
 
-keyName
-	^ keyName ifNil: [ keyName := #G ]
+currentNotePosition
+	^ currentNotePosition ifNil: [ currentNotePosition := 13 atRandom ]
 !
 
-sheet
-	^ sheet
+keyName
+	^ keyName ifNil: [ keyName := #G ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -23,13 +23,26 @@ key :=
 !
 
 renderLinesOn: html
-	lines := (1 to: 5) collect: [ :index | 
+	lines := (1 to: 7) collect: [ :index | 
     	html hr 
-        	class: 'line ' , index asString;
-        	style: 'top: ' , (index * (100/6)) asString , '%;' ]
+        	class: 'line i' , index asString;
+        	style: 'bottom: ' , (index * 12.5) asString , '%;' ]
+!
+
+renderNoteOn: html
+	html img
+   	 	class: 'image note i' , self currentNotePosition asString; 
+        src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';
+        style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.
+	console log: self currentNotePosition asString.
 !
 
 renderOn: html
+	html a 
+    	with: 'update';
+        style: 'position:fixed';
+    	onClick: [ self updateNote ].
+        
 	html div 
     	class: 'sheet-container';
     	with: [
@@ -38,6 +51,12 @@ renderOn: html
     			with: [
     				self 
             			renderKeyOn: html;
-						renderLinesOn: html ]]
+						renderLinesOn: html.
+                    note := html div with: [ self renderNoteOn: html ]]]
+!
+
+updateNote
+	currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.
+	note contents: [:html | self renderNoteOn: html]
 ! !
 

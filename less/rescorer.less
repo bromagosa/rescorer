@@ -36,7 +36,7 @@ body {
 
 html { font-size: 62.5% }
 
-body { font-family: Verdana, Arial }
+body { font-family: 'Permanent Marker', cursive }
 
 .title { .font-size(4) }
 
@@ -77,7 +77,8 @@ body { font-family: Verdana, Arial }
 	width: 60%;
 	position: fixed;
 	left: 3%;
-	bottom: 75px;
+	bottom: 75px; //← production
+	//top: 75px; //← development
 }
 
 .sheet {
@@ -89,14 +90,21 @@ body { font-family: Verdana, Arial }
 .key {
 	position: absolute;
 	height: 90%;
-	top: 10%;
-	left: 5%;
+	top: 8%;
+	left: 10%;
+}
+
+.note {
+	position: absolute;
+	left: 35%;
+	height: 12.5%;
 }
 
 .line {
 	position: absolute;
 	left: 5%;
 	width: 90%;
+	&.i1, &.i7 {display:none}
 }
 
 .body {
@@ -110,18 +118,19 @@ body { font-family: Verdana, Arial }
 	SHAPES
 */
 
-.line {
-	border: 0;
-	height: 2%;
-	.rounded-corners(5px);
-}
-
 .rounded-corners (@radius: 5px) {
   -webkit-border-radius: @radius;
   -moz-border-radius: @radius;
   -ms-border-radius: @radius;
   -o-border-radius: @radius;
   border-radius: @radius;
+}
+
+.line {
+	margin: 0;
+	border: 0;
+	height: 2%;
+	.rounded-corners(5px);
 }
 
 .bubble, .sheet { .rounded-corners(15px) }
