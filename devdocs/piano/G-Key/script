@@ -1,0 +1,13 @@
+fluidsynth -F C3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 C3.mid
+fluidsynth -F D3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 D3.mid
+fluidsynth -F E3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 E3.mid
+fluidsynth -F F3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 F3.mid
+fluidsynth -F G3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 G3.mid
+fluidsynth -F A3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 A3.mid
+fluidsynth -F B3.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 B3.mid
+fluidsynth -F C4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 C4.mid
+fluidsynth -F D4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 D4.mid
+fluidsynth -F E4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 E4.mid
+fluidsynth -F F4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 F4.mid
+fluidsynth -F G4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 G4.mid
+fluidsynth -F A4.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 A4.mid

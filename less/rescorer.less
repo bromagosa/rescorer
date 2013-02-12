@@ -1,0 +1,127 @@
+/*
+	COLORS
+*/
+
+@lightGreen: #d4ff2a;
+@darkGreen: #aad400;
+@white: #edfff6;
+@black: #080a00;
+
+.bar { background-color: @lightGreen }
+
+body { 
+	color: @black;
+	background-color: @darkGreen;
+}
+
+.title { color: @darkGreen; }
+
+.bubble, .sheet { 
+	background-color: @white; 
+	color: @black;
+}
+
+.line { background-color: @black; }
+
+/*
+	FONTS 
+*/
+
+.font-size(@sizeValue){
+  @remValue: @sizeValue;
+  @pxValue: (@sizeValue * 10);
+  font-size: ~"@{pxValue}px"; 
+  font-size: ~"@{remValue}rem";
+}
+
+html { font-size: 62.5% }
+
+body { font-family: Verdana, Arial }
+
+.title { .font-size(4) }
+
+/*
+	POSITIONS AND SIZES
+*/
+
+.bar {
+	width: 100%;
+	height: 50px;
+	position: absolute;
+	&.top { top: 0 }
+	&.bottom { bottom: 0 }
+}
+
+.title { 
+	padding: 5px 10px 0 0;
+	text-align: right;
+}
+
+.bubble { 
+	height: 25%;
+	width: 94%;
+	position: fixed;
+	left: 3%;
+	top: 75px;
+}
+
+.tip {
+	height: 45%;
+	position: absolute;
+	right: 0;
+	bottom: -35%;
+}
+
+.sheet-container {
+	height: 45%;
+	width: 60%;
+	position: fixed;
+	left: 3%;
+	bottom: 75px;
+}
+
+.sheet {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+.key {
+	position: absolute;
+	height: 90%;
+	top: 10%;
+	left: 5%;
+}
+
+.line {
+	position: absolute;
+	left: 5%;
+	width: 90%;
+}
+
+.body {
+	height: 50%;
+	position: fixed;
+	bottom: 50px;
+	right: 0;
+}
+
+/*
+	SHAPES
+*/
+
+.line {
+	border: 0;
+	height: 2%;
+	.rounded-corners(5px);
+}
+
+.rounded-corners (@radius: 5px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  -o-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.bubble, .sheet { .rounded-corners(15px) }

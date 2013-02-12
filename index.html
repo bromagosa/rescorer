@@ -1,0 +1,33 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+    <title>Rescorer</title> 
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+    <link rel="stylesheet" type="text/css" href='css/reset.css' /> 
+    <link rel="stylesheet/less" type="text/css" href='less/rescorer.less' /> 
+    <meta name="author" content="Bernat Romagosa" /> 
+    <script type='text/javascript' src='js/amber.js'></script> 
+    <script type='text/javascript' src='js/lib/less.js'></script> 
+  </head> 
+  <body> 
+    <button onClick="smalltalk.Browser._open()" style="z-index: 100; position: fixed; right: 0; top: 0;"> Class browser</button>
+	<div class="top bar">
+		<h1 class="title">Rescorer</h1>
+	</div>
+	<div class="bubble">
+		<embed class="image tip" src="images/bubble-tip.svg" type="image/svg+xml"/>
+	</div>
+	<embed class="image body" src="images/biel.svg" type="image/svg+xml"/>
+	<div class="bottom bar"></div>
+    <script type='text/javascript'>
+		loadAmber({
+    		files: ['Rescorer.js'],
+    		prefix: 'js',
+			ready: 
+				function() {
+					smalltalk.SheetWidget._new()._appendToJQuery_(jQuery('body'));
+				}
+			});
+	</script> 
+  </body> 
+</html> 
