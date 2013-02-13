@@ -11,7 +11,7 @@
     <script type='text/javascript' src='js/lib/less.js'></script> 
   </head> 
   <body> 
-    <button onClick="smalltalk.Browser._open()" style="z-index: 100; position: fixed; right: 0; top: 0;"> Class browser</button>
+    <button onClick="smalltalk.Browser._open()" style="z-index: 100; position: fixed; right: 0; top: 0; font-size: 6px"> Class browser</button>
 	<div class="top bar">
 		<h1 class="title">Rescorer</h1>
 	</div>
@@ -26,7 +26,7 @@
     		prefix: 'js',
 			ready: 
 				function() {
-					smalltalk.SheetWidget._new()._appendToJQuery_(jQuery('body'));
+					smalltalk.GameWidget._new()._appendToJQuery_(jQuery('body'));
 				}
 			});
 	</script> 

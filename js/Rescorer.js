@@ -1,4 +1,149 @@
 smalltalk.addPackage('Rescorer', {});
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget'], 'Rescorer');
+smalltalk.addMethod(
+"_checkNote_",
+smalltalk.method({
+selector: "checkNote:",
+category: 'actions',
+fn: function (aNoteSymbol){
+var self=this;
+var $1;
+$1=smalltalk.send(self,"_isNoteCorrect_",[aNoteSymbol]);
+if(smalltalk.assert($1)){
+smalltalk.send(self,"_correctAnswerAction",[]);
+} else {
+smalltalk.send(self,"_wrongAnswerAction",[]);
+};
+return self},
+args: ["aNoteSymbol"],
+source: "checkNote: aNoteSymbol\x0a\x09(self isNoteCorrect: aNoteSymbol) \x0a    \x09ifTrue: [ self correctAnswerAction ]\x0a      \x09ifFalse: [ self wrongAnswerAction ]",
+messageSends: ["ifTrue:ifFalse:", "correctAnswerAction", "wrongAnswerAction", "isNoteCorrect:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_correctAnswerAction",
+smalltalk.method({
+selector: "correctAnswerAction",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
+return self},
+args: [],
+source: "correctAnswerAction\x0a\x09self sheetWidget nextNote",
+messageSends: ["nextNote", "sheetWidget"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_isNoteCorrect_",
+smalltalk.method({
+selector: "isNoteCorrect:",
+category: 'testing',
+fn: function (aNoteSymbol){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_symbol",[]),"__eq",[aNoteSymbol]);
+return $1;
+},
+args: ["aNoteSymbol"],
+source: "isNoteCorrect: aNoteSymbol\x0a\x09^ self sheetWidget currentNote symbol = aNoteSymbol",
+messageSends: ["=", "symbol", "currentNote", "sheetWidget"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_noteButtonsWidget",
+smalltalk.method({
+selector: "noteButtonsWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@noteButtonsWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@noteButtonsWidget"]=smalltalk.send(smalltalk.send((smalltalk.NoteButtonsWidget || NoteButtonsWidget),"_new",[]),"_game_",[self]);
+$1=self["@noteButtonsWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "noteButtonsWidget\x0a\x09^ noteButtonsWidget ifNil: [ noteButtonsWidget := NoteButtonsWidget new game: self ]",
+messageSends: ["ifNil:", "game:", "new"],
+referencedClasses: ["NoteButtonsWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+var $1,$2,$3,$4;
+$1=smalltalk.send(html,"_div",[]);
+smalltalk.send($1,"_class_",["sheet-container"]);
+$2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
+$3=smalltalk.send(html,"_div",[]);
+smalltalk.send($3,"_class_",["button-container"]);
+$4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+return self},
+args: ["html"],
+source: "renderOn: html\x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: self sheetWidget.\x0a\x09html div \x0a    \x09class: 'button-container';\x0a    \x09with: self noteButtonsWidget.",
+messageSends: ["class:", "div", "with:", "sheetWidget", "noteButtonsWidget"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_sheetWidget",
+smalltalk.method({
+selector: "sheetWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@sheetWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@sheetWidget"]=smalltalk.send(smalltalk.send((smalltalk.SheetWidget || SheetWidget),"_new",[]),"_game_",[self]);
+$1=self["@sheetWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "sheetWidget\x0a\x09^ sheetWidget ifNil: [ sheetWidget := SheetWidget new game: self ]",
+messageSends: ["ifNil:", "game:", "new"],
+referencedClasses: ["SheetWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_wrongAnswerAction",
+smalltalk.method({
+selector: "wrongAnswerAction",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(window,"_alert_",["Fatal!"]);
+return self},
+args: [],
+source: "wrongAnswerAction\x0a\x09window alert: 'Fatal!'",
+messageSends: ["alert:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+
+
 smalltalk.addClass('Note', smalltalk.Object, ['position', 'symbol', 'octave'], 'Rescorer');
 smalltalk.addMethod(
 "_octave",
@@ -126,7 +271,7 @@ smalltalk.addMethod(
 "_fKeyNotes",
 smalltalk.method({
 selector: "fKeyNotes",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
@@ -142,7 +287,7 @@ smalltalk.addMethod(
 "_fKeyOctaves",
 smalltalk.method({
 selector: "fKeyOctaves",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 return [(1), (1), (1), (1), (1), (2), (2), (2), (2), (2), (2), (2), (3)];
@@ -158,7 +303,7 @@ smalltalk.addMethod(
 "_gKeyNotes",
 smalltalk.method({
 selector: "gKeyNotes",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A")];
@@ -174,7 +319,7 @@ smalltalk.addMethod(
 "_gKeyOctaves",
 smalltalk.method({
 selector: "gKeyOctaves",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 return [(3), (3), (3), (3), (3), (3), (3), (4), (4), (4), (4), (4), (4)];
@@ -190,7 +335,7 @@ smalltalk.addMethod(
 "_noteDictionary",
 smalltalk.method({
 selector: "noteDictionary",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 var $2,$3,$4,$1;
@@ -218,7 +363,7 @@ smalltalk.addMethod(
 "_octaveDictionary",
 smalltalk.method({
 selector: "octaveDictionary",
-category: 'not yet classified',
+category: 'accessing',
 fn: function (){
 var self=this;
 var $2,$3,$4,$1;
@@ -265,7 +410,119 @@ referencedClasses: []
 smalltalk.Note.klass);
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition'], 'Rescorer');
+smalltalk.addClass('NoteButtonsWidget', smalltalk.Widget, ['noteNamesDictionary', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_game",
+smalltalk.method({
+selector: "game",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@game"];
+return $1;
+},
+args: [],
+source: "game\x0a\x09^ game",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.NoteButtonsWidget);
+
+smalltalk.addMethod(
+"_game_",
+smalltalk.method({
+selector: "game:",
+category: 'accessing',
+fn: function (aGameWidget){
+var self=this;
+self["@game"]=aGameWidget;
+return self},
+args: ["aGameWidget"],
+source: "game: aGameWidget\x0a\x09game := aGameWidget",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.NoteButtonsWidget);
+
+smalltalk.addMethod(
+"_noteNamesDictionary",
+smalltalk.method({
+selector: "noteNamesDictionary",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@noteNamesDictionary"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",["DO",smalltalk.symbolFor("C")]);
+smalltalk.send($3,"_at_put_",["RE",smalltalk.symbolFor("D")]);
+smalltalk.send($3,"_at_put_",["MI",smalltalk.symbolFor("E")]);
+smalltalk.send($3,"_at_put_",["FA",smalltalk.symbolFor("F")]);
+smalltalk.send($3,"_at_put_",["SOL",smalltalk.symbolFor("G")]);
+smalltalk.send($3,"_at_put_",["LA",smalltalk.symbolFor("A")]);
+smalltalk.send($3,"_at_put_",["SI",smalltalk.symbolFor("B")]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@noteNamesDictionary"]=$4;
+$1=self["@noteNamesDictionary"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "noteNamesDictionary\x0a\x09^ noteNamesDictionary ifNil: \x0a    \x09[ noteNamesDictionary := Dictionary new\x0a        \x09at: 'DO' put: #C;\x0a            at: 'RE' put: #D;\x0a            at: 'MI' put: #E;\x0a            at: 'FA' put: #F;\x0a            at: 'SOL' put: #G;\x0a            at: 'LA' put: #A;\x0a            at: 'SI' put: #B;\x0a            yourself ]",
+messageSends: ["ifNil:", "at:put:", "new", "yourself"],
+referencedClasses: ["Dictionary"]
+}),
+smalltalk.NoteButtonsWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+var $1,$2;
+smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteNamesDictionary",[]),"_associations",[]),"_do_",[(function(each){
+$1=smalltalk.send(html,"_button",[]);
+smalltalk.send($1,"_with_",[smalltalk.send(each,"_key",[])]);
+$2=smalltalk.send($1,"_onClick_",[(function(){
+return smalltalk.send(smalltalk.send(self,"_game",[]),"_checkNote_",[smalltalk.send(each,"_value",[])]);
+})]);
+return $2;
+})]);
+return self},
+args: ["html"],
+source: "renderOn: html\x0a\x09self noteNamesDictionary associations\x0a    \x09do: [:each | \x0a\x09\x09\x09html button \x0a            \x09with: each key;\x0a                onClick: [ self game checkNote: each value ]]",
+messageSends: ["do:", "with:", "key", "button", "onClick:", "checkNote:", "value", "game", "associations", "noteNamesDictionary"],
+referencedClasses: []
+}),
+smalltalk.NoteButtonsWidget);
+
+
+
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_currentNote",
+smalltalk.method({
+selector: "currentNote",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send((smalltalk.Note || Note),"_position_key_",[smalltalk.send(self,"_currentNotePosition",[]),smalltalk.send(self,"_keyName",[])]);
+return $1;
+},
+args: [],
+source: "currentNote\x0a\x09^ Note position: self currentNotePosition key: self keyName",
+messageSends: ["position:key:", "currentNotePosition", "keyName"],
+referencedClasses: ["Note"]
+}),
+smalltalk.SheetWidget);
+
 smalltalk.addMethod(
 "_currentNotePosition",
 smalltalk.method({
@@ -291,6 +548,40 @@ referencedClasses: []
 smalltalk.SheetWidget);
 
 smalltalk.addMethod(
+"_game",
+smalltalk.method({
+selector: "game",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@game"];
+return $1;
+},
+args: [],
+source: "game\x0a\x09^ game",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_game_",
+smalltalk.method({
+selector: "game:",
+category: 'accessing',
+fn: function (aGameWidget){
+var self=this;
+self["@game"]=aGameWidget;
+return self},
+args: ["aGameWidget"],
+source: "game: aGameWidget\x0a\x09game := aGameWidget",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
 "_keyName",
 smalltalk.method({
 selector: "keyName",
@@ -310,6 +601,25 @@ return $1;
 args: [],
 source: "keyName\x0a\x09^ keyName ifNil: [ keyName := #G ]",
 messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_nextNote",
+smalltalk.method({
+selector: "nextNote",
+category: 'actions',
+fn: function (){
+var self=this;
+self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
+smalltalk.send(self["@note"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderNoteOn_",[html]);
+})]);
+return self},
+args: [],
+source: "nextNote\x0a\x09currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.\x0a\x09note contents: [ :html | self renderNoteOn: html ]",
+messageSends: ["atRandom", "remove:", "to:", "contents:", "renderNoteOn:"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -377,11 +687,10 @@ $4=smalltalk.send("images/note","__comma",[$5]);
 $3=smalltalk.send($4,"__comma",[".svg"]);
 smalltalk.send($2,"_src_",[$3]);
 $7=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]),"_asString",[])]),"__comma",["%;"])]);
-smalltalk.send(console,"_log_",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])]);
 return self},
 args: ["html"],
-source: "renderNoteOn: html\x0a\x09html img\x0a   \x09 \x09class: 'image note i' , self currentNotePosition asString; \x0a        src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';\x0a        style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.\x0a\x09console log: self currentNotePosition asString.",
-messageSends: ["class:", ",", "asString", "currentNotePosition", "img", "src:", "ifTrue:ifFalse:", "includes:", "style:", "+", "*", "log:"],
+source: "renderNoteOn: html\x0a\x09html img\x0a   \x09 \x09class: 'image note i' , self currentNotePosition asString; \x0a        src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';\x0a        style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.",
+messageSends: ["class:", ",", "asString", "currentNotePosition", "img", "src:", "ifTrue:ifFalse:", "includes:", "style:", "+", "*"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -393,54 +702,23 @@ selector: "renderOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-var $1,$2,$3,$5,$6,$4;
-$1=smalltalk.send(html,"_a",[]);
-smalltalk.send($1,"_with_",["update"]);
-smalltalk.send($1,"_style_",["position:fixed"]);
-$2=smalltalk.send($1,"_onClick_",[(function(){
-return smalltalk.send(self,"_updateNote",[]);
-})]);
-$3=smalltalk.send(html,"_div",[]);
-smalltalk.send($3,"_class_",["sheet-container"]);
-$4=smalltalk.send($3,"_with_",[(function(){
+var $1,$2;
 self["@sheet"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_class_",["sheet"]);
-self["@sheet"];
-return smalltalk.send(self["@sheet"],"_with_",[(function(){
-$5=self;
-smalltalk.send($5,"_renderKeyOn_",[html]);
-$6=smalltalk.send($5,"_renderLinesOn_",[html]);
-$6;
+smalltalk.send(self["@sheet"],"_with_",[(function(){
+$1=self;
+smalltalk.send($1,"_renderKeyOn_",[html]);
+$2=smalltalk.send($1,"_renderLinesOn_",[html]);
+$2;
 self["@note"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
 return smalltalk.send(self,"_renderNoteOn_",[html]);
 })]);
 return self["@note"];
 })]);
-})]);
 return self},
 args: ["html"],
-source: "renderOn: html\x0a\x09html a \x0a    \x09with: 'update';\x0a        style: 'position:fixed';\x0a    \x09onClick: [ self updateNote ].\x0a        \x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: [\x0a\x09\x09\x09sheet := html div class: 'sheet'.\x0a            sheet\x0a    \x09\x09\x09with: [\x0a    \x09\x09\x09\x09self \x0a            \x09\x09\x09renderKeyOn: html;\x0a\x09\x09\x09\x09\x09\x09renderLinesOn: html.\x0a                    note := html div with: [ self renderNoteOn: html ]]]",
-messageSends: ["with:", "a", "style:", "onClick:", "updateNote", "class:", "div", "renderKeyOn:", "renderLinesOn:", "renderNoteOn:"],
+source: "renderOn: html\x0a    sheet := html div class: 'sheet'.\x0a\x09\x09sheet\x0a\x09\x09\x09with: [\x0a\x09\x09\x09\x09self \x0a\x09\x09\x09\x09\x09renderKeyOn: html;\x0a\x09\x09\x09\x09\x09renderLinesOn: html.\x0a\x09\x09note := html div with: [ self renderNoteOn: html ]]",
+messageSends: ["class:", "div", "with:", "renderKeyOn:", "renderLinesOn:", "renderNoteOn:"],
 referencedClasses: []
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_updateNote",
-smalltalk.method({
-selector: "updateNote",
-category: 'rendering',
-fn: function (){
-var self=this;
-self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
-smalltalk.send(console,"_log_",[smalltalk.send(smalltalk.send((smalltalk.NoteController || NoteController),"_new",[]),"_noteAtPosition_key_",[self["@currentNotePosition"],smalltalk.send(self,"_keyName",[])])]);
-smalltalk.send(self["@note"],"_contents_",[(function(html){
-return smalltalk.send(self,"_renderNoteOn_",[html]);
-})]);
-return self},
-args: [],
-source: "updateNote\x0a\x09currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.\x0a    console log:(NoteController new noteAtPosition: currentNotePosition key: self keyName).\x0a\x09note contents: [:html | self renderNoteOn: html]",
-messageSends: ["atRandom", "remove:", "to:", "log:", "noteAtPosition:key:", "keyName", "new", "contents:", "renderNoteOn:"],
-referencedClasses: ["NoteController"]
 }),
 smalltalk.SheetWidget);
 

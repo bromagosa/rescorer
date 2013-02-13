@@ -1,4 +1,51 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
+Widget subclass: #GameWidget
+	instanceVariableNames: 'sheetWidget noteButtonsWidget'
+	package: 'Rescorer'!
+
+!GameWidget methodsFor: 'accessing'!
+
+noteButtonsWidget
+	^ noteButtonsWidget ifNil: [ noteButtonsWidget := NoteButtonsWidget new game: self ]
+!
+
+sheetWidget
+	^ sheetWidget ifNil: [ sheetWidget := SheetWidget new game: self ]
+! !
+
+!GameWidget methodsFor: 'actions'!
+
+checkNote: aNoteSymbol
+	(self isNoteCorrect: aNoteSymbol) 
+    	ifTrue: [ self correctAnswerAction ]
+      	ifFalse: [ self wrongAnswerAction ]
+!
+
+correctAnswerAction
+	self sheetWidget nextNote
+!
+
+wrongAnswerAction
+	window alert: 'Fatal!!'
+! !
+
+!GameWidget methodsFor: 'rendering'!
+
+renderOn: html
+	html div 
+    	class: 'sheet-container';
+    	with: self sheetWidget.
+	html div 
+    	class: 'button-container';
+    	with: self noteButtonsWidget.
+! !
+
+!GameWidget methodsFor: 'testing'!
+
+isNoteCorrect: aNoteSymbol
+	^ self sheetWidget currentNote symbol = aNoteSymbol
+! !
+
 Object subclass: #Note
 	instanceVariableNames: 'position symbol octave'
 	package: 'Rescorer'!
@@ -35,16 +82,7 @@ symbol: aString
 
 Note class instanceVariableNames: 'noteDictionary octaveDictionary'!
 
-!Note class methodsFor: 'instance creation'!
-
-position: aNumber key: aKeySymbol
-	^ self new 
-    	symbol: ((self noteDictionary at: aKeySymbol) at: aNumber);
-    	position: aNumber;
-		octave: ((self octaveDictionary at: aKeySymbol) at: aNumber)
-! !
-
-!Note class methodsFor: 'not yet classified'!
+!Note class methodsFor: 'accessing'!
 
 fKeyNotes
 	^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C)
@@ -80,18 +118,83 @@ octaveDictionary
                     yourself ]
 ! !
 
+!Note class methodsFor: 'instance creation'!
+
+position: aNumber key: aKeySymbol
+	^ self new 
+    	symbol: ((self noteDictionary at: aKeySymbol) at: aNumber);
+    	position: aNumber;
+		octave: ((self octaveDictionary at: aKeySymbol) at: aNumber)
+! !
+
+Widget subclass: #NoteButtonsWidget
+	instanceVariableNames: 'noteNamesDictionary game'
+	package: 'Rescorer'!
+
+!NoteButtonsWidget methodsFor: 'accessing'!
+
+game
+	^ game
+!
+
+game: aGameWidget
+	game := aGameWidget
+!
+
+noteNamesDictionary
+	^ noteNamesDictionary ifNil: 
+    	[ noteNamesDictionary := Dictionary new
+        	at: 'DO' put: #C;
+            at: 'RE' put: #D;
+            at: 'MI' put: #E;
+            at: 'FA' put: #F;
+            at: 'SOL' put: #G;
+            at: 'LA' put: #A;
+            at: 'SI' put: #B;
+            yourself ]
+! !
+
+!NoteButtonsWidget methodsFor: 'rendering'!
+
+renderOn: html
+	self noteNamesDictionary associations
+    	do: [:each | 
+			html button 
+            	with: each key;
+                onClick: [ self game checkNote: each value ]]
+! !
+
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines key sheet keyName note currentNotePosition'
+	instanceVariableNames: 'lines key sheet keyName note currentNotePosition game'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
+
+currentNote
+	^ Note position: self currentNotePosition key: self keyName
+!
 
 currentNotePosition
 	^ currentNotePosition ifNil: [ currentNotePosition := 13 atRandom ]
 !
 
+game
+	^ game
+!
+
+game: aGameWidget
+	game := aGameWidget
+!
+
 keyName
 	^ keyName ifNil: [ keyName := #G ]
+! !
+
+!SheetWidget methodsFor: 'actions'!
+
+nextNote
+	currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.
+	note contents: [ :html | self renderNoteOn: html ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -115,30 +218,15 @@ renderNoteOn: html
    	 	class: 'image note i' , self currentNotePosition asString; 
         src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';
         style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.
-	console log: self currentNotePosition asString.
 !
 
 renderOn: html
-	html a 
-    	with: 'update';
-        style: 'position:fixed';
-    	onClick: [ self updateNote ].
-        
-	html div 
-    	class: 'sheet-container';
-    	with: [
-			sheet := html div class: 'sheet'.
-            sheet
-    			with: [
-    				self 
-            			renderKeyOn: html;
-						renderLinesOn: html.
-                    note := html div with: [ self renderNoteOn: html ]]]
-!
-
-updateNote
-	currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.
-    console log:(NoteController new noteAtPosition: currentNotePosition key: self keyName).
-	note contents: [:html | self renderNoteOn: html]
+    sheet := html div class: 'sheet'.
+		sheet
+			with: [
+				self 
+					renderKeyOn: html;
+					renderLinesOn: html.
+		note := html div with: [ self renderNoteOn: html ]]
 ! !
 
