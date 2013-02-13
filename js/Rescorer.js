@@ -1,5 +1,5 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'audio'], 'Rescorer');
 smalltalk.addMethod(
 "_checkNote_",
 smalltalk.method({
@@ -29,11 +29,12 @@ selector: "correctAnswerAction",
 category: 'actions',
 fn: function (){
 var self=this;
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_play",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
 return self},
 args: [],
-source: "correctAnswerAction\x0a\x09self sheetWidget nextNote",
-messageSends: ["nextNote", "sheetWidget"],
+source: "correctAnswerAction\x0a\x09self sheetWidget play.\x0a\x09self sheetWidget nextNote",
+messageSends: ["play", "sheetWidget", "nextNote"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -146,6 +147,101 @@ smalltalk.GameWidget);
 
 smalltalk.addClass('Note', smalltalk.Object, ['position', 'symbol', 'octave'], 'Rescorer');
 smalltalk.addMethod(
+"_audioPath",
+smalltalk.method({
+selector: "audioPath",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send("sounds/","__comma",[smalltalk.send(self,"_soundFile",[])]);
+return $1;
+},
+args: [],
+source: "audioPath\x0a\x09^ 'sounds/' , self soundFile",
+messageSends: [",", "soundFile"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_bottom",
+smalltalk.method({
+selector: "bottom",
+category: 'accessing - rendering',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=smalltalk.send(smalltalk.send(self,"_position",[]),"__lt",[(8)]);
+if(smalltalk.assert($2)){
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_position",[]),"__star",[(6.25)]),"__plus",[(1)]);
+} else {
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_position",[]),"__minus",[(6)]),"__star",[(6.25)]),"__plus",[(1)]);
+};
+return $1;
+},
+args: [],
+source: "bottom\x0a\x09^ self position < 8\x0a    \x09ifTrue: [ (self position * 6.25) + 1 ]\x0a      \x09ifFalse: [ ((self position - 6) * 6.25) + 1 ]",
+messageSends: ["ifTrue:ifFalse:", "+", "*", "position", "-", "<"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_cssClass",
+smalltalk.method({
+selector: "cssClass",
+category: 'accessing - rendering',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send("note i","__comma",[smalltalk.send(smalltalk.send(self,"_position",[]),"_asString",[])]);
+return $1;
+},
+args: [],
+source: "cssClass\x0a\x09^ 'note i' , self position asString",
+messageSends: [",", "asString", "position"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_cssStyle",
+smalltalk.method({
+selector: "cssStyle",
+category: 'accessing - rendering',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(self,"_bottom",[]),"_asString",[])]),"__comma",["%;"]);
+return $1;
+},
+args: [],
+source: "cssStyle\x0a\x09^ 'bottom: ' , self bottom asString , '%;'",
+messageSends: [",", "asString", "bottom"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
+"_imagePath",
+smalltalk.method({
+selector: "imagePath",
+category: 'accessing - rendering',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversedString",[])]),"__comma",[".svg"]);
+return $1;
+},
+args: [],
+source: "imagePath\x0a\x09^ 'images/note' , self slashedOrReversedString , '.svg'",
+messageSends: [",", "slashedOrReversedString"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
 "_octave",
 smalltalk.method({
 selector: "octave",
@@ -214,6 +310,38 @@ referencedClasses: []
 smalltalk.Note);
 
 smalltalk.addMethod(
+"_slashedOrReversedString",
+smalltalk.method({
+selector: "slashedOrReversedString",
+category: 'accessing - rendering',
+fn: function (){
+var self=this;
+var $1,$2,$3;
+var string;
+string="";
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_position",[]),"__eq",[(1)]),"_or_",[(function(){
+return smalltalk.send(smalltalk.send(self,"_position",[]),"__eq",[(13)]);
+})]);
+if(smalltalk.assert($1)){
+string="-slashed";
+string;
+};
+$2=smalltalk.send(smalltalk.send(self,"_position",[]),"__gt",[(7)]);
+if(smalltalk.assert($2)){
+string=smalltalk.send(string,"__comma",["-reversed"]);
+string;
+};
+$3=string;
+return $3;
+},
+args: [],
+source: "slashedOrReversedString\x0a\x09| string |\x0a    string := ''.\x0a\x09\x0a    (self position = 1 or: [ self position = 13 ])\x0a    \x09ifTrue: [ string := '-slashed' ].\x0a    \x0a    self position > 7 \x0a    \x09ifTrue: [ string := string , '-reversed' ].\x0a\x0a\x09^ string",
+messageSends: ["ifTrue:", "or:", "=", "position", ",", ">"],
+referencedClasses: []
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
 "_soundFile",
 smalltalk.method({
 selector: "soundFile",
@@ -221,11 +349,11 @@ category: 'accessing',
 fn: function (){
 var self=this;
 var $1;
-$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_symbol",[]),"_asString",[]),"__comma",[smalltalk.send(smalltalk.send(self,"_octave",[]),"_asString",[])]),"__comma",[".wav"]);
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_symbol",[]),"_asString",[]),"__comma",[smalltalk.send(smalltalk.send(self,"_octave",[]),"_asString",[])]),"__comma",[".ogg"]);
 return $1;
 },
 args: [],
-source: "soundFile\x0a\x09^ self symbol asString , self octave asString , '.wav'",
+source: "soundFile\x0a\x09^ self symbol asString , self octave asString , '.ogg'",
 messageSends: [",", "asString", "octave", "symbol"],
 referencedClasses: []
 }),
@@ -504,7 +632,7 @@ smalltalk.NoteButtonsWidget);
 
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'key', 'sheet', 'keyName', 'note', 'currentNotePosition', 'game'], 'Rescorer');
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'noteDiv', 'currentNote', 'game'], 'Rescorer');
 smalltalk.addMethod(
 "_currentNote",
 smalltalk.method({
@@ -512,60 +640,19 @@ selector: "currentNote",
 category: 'accessing',
 fn: function (){
 var self=this;
-var $1;
-$1=smalltalk.send((smalltalk.Note || Note),"_position_key_",[smalltalk.send(self,"_currentNotePosition",[]),smalltalk.send(self,"_keyName",[])]);
-return $1;
-},
-args: [],
-source: "currentNote\x0a\x09^ Note position: self currentNotePosition key: self keyName",
-messageSends: ["position:key:", "currentNotePosition", "keyName"],
-referencedClasses: ["Note"]
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_currentNoteBottom",
-smalltalk.method({
-selector: "currentNoteBottom",
-category: 'rendering',
-fn: function (){
-var self=this;
 var $2,$1;
-$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__lt",[(8)]);
-if(smalltalk.assert($2)){
-$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]);
-} else {
-$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__minus",[(6)]),"__star",[(6.25)]),"__plus",[(1)]);
-};
-return $1;
-},
-args: [],
-source: "currentNoteBottom\x0a\x09^ self currentNotePosition < 8\x0a    \x09ifTrue: [ (self currentNotePosition * 6.25) + 1 ]\x0a      \x09ifFalse: [ ((self currentNotePosition - 6) * 6.25) + 1 ]",
-messageSends: ["ifTrue:ifFalse:", "+", "*", "currentNotePosition", "-", "<"],
-referencedClasses: []
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_currentNotePosition",
-smalltalk.method({
-selector: "currentNotePosition",
-category: 'accessing',
-fn: function (){
-var self=this;
-var $2,$1;
-$2=self["@currentNotePosition"];
+$2=self["@currentNote"];
 if(($receiver = $2) == nil || $receiver == undefined){
-self["@currentNotePosition"]=smalltalk.send((13),"_atRandom",[]);
-$1=self["@currentNotePosition"];
+smalltalk.send(self,"_nextNote",[]);
+$1=self["@currentNote"];
 } else {
 $1=$2;
 };
 return $1;
 },
 args: [],
-source: "currentNotePosition\x0a\x09^ currentNotePosition ifNil: [ currentNotePosition := 13 atRandom ]",
-messageSends: ["ifNil:", "atRandom"],
+source: "currentNote\x0a\x09^ currentNote ifNil: [ self nextNote. currentNote ]",
+messageSends: ["ifNil:", "nextNote"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -635,14 +722,45 @@ selector: "nextNote",
 category: 'actions',
 fn: function (){
 var self=this;
-self["@currentNotePosition"]=smalltalk.send(smalltalk.send(smalltalk.send((1),"_to_",[(13)]),"_remove_",[self["@currentNotePosition"]]),"_atRandom",[]);
-smalltalk.send(self["@note"],"_contents_",[(function(html){
+var $1,$2;
+var notePositions;
+notePositions=smalltalk.send((1),"_to_",[(13)]);
+$1=self["@currentNote"];
+if(($receiver = $1) == nil || $receiver == undefined){
+$1;
+} else {
+smalltalk.send(notePositions,"_remove_",[smalltalk.send(self["@currentNote"],"_position",[])]);
+};
+self["@currentNote"]=smalltalk.send((smalltalk.Note || Note),"_position_key_",[smalltalk.send(notePositions,"_atRandom",[]),smalltalk.send(self,"_keyName",[])]);
+$2=self["@noteDiv"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$2;
+} else {
+smalltalk.send(self["@noteDiv"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderNoteOn_",[html]);
 })]);
+};
 return self},
 args: [],
-source: "nextNote\x0a\x09currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.\x0a\x09note contents: [ :html | self renderNoteOn: html ]",
-messageSends: ["atRandom", "remove:", "to:", "contents:", "renderNoteOn:"],
+source: "nextNote\x0a\x09| notePositions |\x0a    notePositions := (1 to: 13).\x0a    currentNote ifNotNil: [ notePositions remove: currentNote position ].\x0a\x09currentNote := Note position: notePositions atRandom key: self keyName.\x0a\x09noteDiv ifNotNil: [ noteDiv contents: [ :html | self renderNoteOn: html ]]",
+messageSends: ["to:", "ifNotNil:", "remove:", "position", "position:key:", "atRandom", "keyName", "contents:", "renderNoteOn:"],
+referencedClasses: ["Note"]
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_play",
+smalltalk.method({
+selector: "play",
+category: 'actions',
+fn: function (){
+var self=this;
+ $("audio")[0].play() ;
+;
+return self},
+args: [],
+source: "play\x0a\x09< $(\x22audio\x22)[0].play() >",
+messageSends: [],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -658,10 +776,10 @@ var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",[smalltalk.send("image key ","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])])]);
 $2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/","__comma",[smalltalk.send(smalltalk.send(self,"_keyName",[]),"_asString",[])]),"__comma",[".svg"])]);
-self["@key"]=$2;
+self["@keyImg"]=$2;
 return self},
 args: ["html"],
-source: "renderKeyOn: html\x0akey := \x0a    html img\x0a    \x09class: 'image key ' , self keyName asString; \x0a\x09\x09src: 'images/' , self keyName asString , '.svg'.",
+source: "renderKeyOn: html\x0a\x09keyImg := \x0a    \x09html img\x0a    \x09\x09class: 'image key ' , self keyName asString; \x0a\x09\x09\x09src: 'images/' , self keyName asString , '.svg'.",
 messageSends: ["class:", ",", "asString", "keyName", "img", "src:"],
 referencedClasses: []
 }),
@@ -698,13 +816,14 @@ fn: function (html){
 var self=this;
 var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
-smalltalk.send($1,"_class_",[smalltalk.send("note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
-smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversed",[])]),"__comma",[".svg"])]);
-$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(self,"_currentNoteBottom",[]),"_asString",[])]),"__comma",["%;"])]);
+smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssClass",[])]);
+smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_imagePath",[])]);
+$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssStyle",[])]);
+smalltalk.send(smalltalk.send(html,"_audio",[]),"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
 return self},
 args: ["html"],
-source: "renderNoteOn: html\x0a\x09html img\x0a   \x09\x09class: 'note i' , self currentNotePosition asString; \x0a        src: 'images/note' , self slashedOrReversed , '.svg';\x0a    \x09style: 'bottom: ' , self currentNoteBottom asString , '%;'.",
-messageSends: ["class:", ",", "asString", "currentNotePosition", "img", "src:", "slashedOrReversed", "style:", "currentNoteBottom"],
+source: "renderNoteOn: html\x0a\x09html img\x0a   \x09\x09class: self currentNote cssClass; \x0a        src: self currentNote imagePath;\x0a    \x09style: self currentNote cssStyle.\x0a        \x0a\x09html audio src: self currentNote audioPath.",
+messageSends: ["class:", "cssClass", "currentNote", "img", "src:", "imagePath", "style:", "cssStyle", "audioPath", "audio"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -717,51 +836,21 @@ category: 'rendering',
 fn: function (html){
 var self=this;
 var $1,$2;
-self["@sheet"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_class_",["sheet"]);
-smalltalk.send(self["@sheet"],"_with_",[(function(){
+self["@sheetDiv"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_class_",["sheet"]);
+smalltalk.send(self["@sheetDiv"],"_with_",[(function(){
 $1=self;
 smalltalk.send($1,"_renderKeyOn_",[html]);
 $2=smalltalk.send($1,"_renderLinesOn_",[html]);
 $2;
-self["@note"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+self["@noteDiv"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
 return smalltalk.send(self,"_renderNoteOn_",[html]);
 })]);
-return self["@note"];
+return self["@noteDiv"];
 })]);
 return self},
 args: ["html"],
-source: "renderOn: html\x0a    sheet := html div class: 'sheet'.\x0a\x09\x09sheet\x0a\x09\x09\x09with: [\x0a\x09\x09\x09\x09self \x0a\x09\x09\x09\x09\x09renderKeyOn: html;\x0a\x09\x09\x09\x09\x09renderLinesOn: html.\x0a\x09\x09note := html div with: [ self renderNoteOn: html ]]",
+source: "renderOn: html\x0a    sheetDiv := html div class: 'sheet'.\x0a\x09sheetDiv\x0a\x09\x09with: [\x0a\x09\x09\x09self \x0a\x09\x09\x09\x09renderKeyOn: html;\x0a\x09\x09\x09\x09renderLinesOn: html.\x0a\x09noteDiv := html div with: [ self renderNoteOn: html ]]",
 messageSends: ["class:", "div", "with:", "renderKeyOn:", "renderLinesOn:", "renderNoteOn:"],
-referencedClasses: []
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_slashedOrReversed",
-smalltalk.method({
-selector: "slashedOrReversed",
-category: 'accessing',
-fn: function (){
-var self=this;
-var $1,$2,$3;
-var string;
-string="";
-$1=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
-if(smalltalk.assert($1)){
-string="-slashed";
-string;
-};
-$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__gt",[(7)]);
-if(smalltalk.assert($2)){
-string=smalltalk.send(string,"__comma",["-reversed"]);
-string;
-};
-$3=string;
-return $3;
-},
-args: [],
-source: "slashedOrReversed\x0a\x09| string |\x0a    string := ''.\x0a\x09\x0a    (#(1 13) includes: self currentNotePosition) \x0a    \x09ifTrue: [ string := '-slashed' ].\x0a    \x0a    self currentNotePosition > 7 \x0a    \x09ifTrue: [ string := string , '-reversed' ].\x0a\x0a\x09^ string",
-messageSends: ["ifTrue:", "includes:", "currentNotePosition", ",", ">"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);

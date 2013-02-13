@@ -1,6 +1,6 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #GameWidget
-	instanceVariableNames: 'sheetWidget noteButtonsWidget'
+	instanceVariableNames: 'sheetWidget noteButtonsWidget audio'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
@@ -22,6 +22,7 @@ checkNote: aNoteSymbol
 !
 
 correctAnswerAction
+	self sheetWidget play.
 	self sheetWidget nextNote
 !
 
@@ -52,6 +53,10 @@ Object subclass: #Note
 
 !Note methodsFor: 'accessing'!
 
+audioPath
+	^ 'sounds/' , self soundFile
+!
+
 octave
 	^ octave
 !
@@ -69,7 +74,7 @@ position: aNumber
 !
 
 soundFile
-	^ self symbol asString , self octave asString , '.wav'
+	^ self symbol asString , self octave asString , '.ogg'
 !
 
 symbol
@@ -78,6 +83,39 @@ symbol
 
 symbol: aString
 	symbol := aString
+! !
+
+!Note methodsFor: 'accessing - rendering'!
+
+bottom
+	^ self position < 8
+    	ifTrue: [ (self position * 6.25) + 1 ]
+      	ifFalse: [ ((self position - 6) * 6.25) + 1 ]
+!
+
+cssClass
+	^ 'note i' , self position asString
+!
+
+cssStyle
+	^ 'bottom: ' , self bottom asString , '%;'
+!
+
+imagePath
+	^ 'images/note' , self slashedOrReversedString , '.svg'
+!
+
+slashedOrReversedString
+	| string |
+    string := ''.
+	
+    (self position = 1 or: [ self position = 13 ])
+    	ifTrue: [ string := '-slashed' ].
+    
+    self position > 7 
+    	ifTrue: [ string := string , '-reversed' ].
+
+	^ string
 ! !
 
 Note class instanceVariableNames: 'noteDictionary octaveDictionary'!
@@ -165,17 +203,13 @@ renderOn: html
 ! !
 
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines key sheet keyName note currentNotePosition game'
+	instanceVariableNames: 'lines keyImg sheetDiv keyName noteDiv currentNote game'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
 
 currentNote
-	^ Note position: self currentNotePosition key: self keyName
-!
-
-currentNotePosition
-	^ currentNotePosition ifNil: [ currentNotePosition := 13 atRandom ]
+	^ currentNote ifNil: [ self nextNote. currentNote ]
 !
 
 game
@@ -188,41 +222,29 @@ game: aGameWidget
 
 keyName
 	^ keyName ifNil: [ keyName := #G ]
-!
-
-slashedOrReversed
-	| string |
-    string := ''.
-	
-    (#(1 13) includes: self currentNotePosition) 
-    	ifTrue: [ string := '-slashed' ].
-    
-    self currentNotePosition > 7 
-    	ifTrue: [ string := string , '-reversed' ].
-
-	^ string
 ! !
 
 !SheetWidget methodsFor: 'actions'!
 
 nextNote
-	currentNotePosition := ((1 to: 13) remove: currentNotePosition) atRandom.
-	note contents: [ :html | self renderNoteOn: html ]
+	| notePositions |
+    notePositions := (1 to: 13).
+    currentNote ifNotNil: [ notePositions remove: currentNote position ].
+	currentNote := Note position: notePositions atRandom key: self keyName.
+	noteDiv ifNotNil: [ noteDiv contents: [ :html | self renderNoteOn: html ]]
+!
+
+play
+	< $("audio")[0].play() >
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
 
-currentNoteBottom
-	^ self currentNotePosition < 8
-    	ifTrue: [ (self currentNotePosition * 6.25) + 1 ]
-      	ifFalse: [ ((self currentNotePosition - 6) * 6.25) + 1 ]
-!
-
 renderKeyOn: html
-key := 
-    html img
-    	class: 'image key ' , self keyName asString; 
-		src: 'images/' , self keyName asString , '.svg'.
+	keyImg := 
+    	html img
+    		class: 'image key ' , self keyName asString; 
+			src: 'images/' , self keyName asString , '.svg'.
 !
 
 renderLinesOn: html
@@ -234,18 +256,20 @@ renderLinesOn: html
 
 renderNoteOn: html
 	html img
-   		class: 'note i' , self currentNotePosition asString; 
-        src: 'images/note' , self slashedOrReversed , '.svg';
-    	style: 'bottom: ' , self currentNoteBottom asString , '%;'.
+   		class: self currentNote cssClass; 
+        src: self currentNote imagePath;
+    	style: self currentNote cssStyle.
+        
+	html audio src: self currentNote audioPath.
 !
 
 renderOn: html
-    sheet := html div class: 'sheet'.
-		sheet
-			with: [
-				self 
-					renderKeyOn: html;
-					renderLinesOn: html.
-		note := html div with: [ self renderNoteOn: html ]]
+    sheetDiv := html div class: 'sheet'.
+	sheetDiv
+		with: [
+			self 
+				renderKeyOn: html;
+				renderLinesOn: html.
+	noteDiv := html div with: [ self renderNoteOn: html ]]
 ! !
 
