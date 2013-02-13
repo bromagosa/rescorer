@@ -524,6 +524,29 @@ referencedClasses: ["Note"]
 smalltalk.SheetWidget);
 
 smalltalk.addMethod(
+"_currentNoteBottom",
+smalltalk.method({
+selector: "currentNoteBottom",
+category: 'rendering',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__lt",[(8)]);
+if(smalltalk.assert($2)){
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]);
+} else {
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__minus",[(6)]),"__star",[(6.25)]),"__plus",[(1)]);
+};
+return $1;
+},
+args: [],
+source: "currentNoteBottom\x0a\x09^ self currentNotePosition < 8\x0a    \x09ifTrue: [ (self currentNotePosition * 6.25) + 1 ]\x0a      \x09ifFalse: [ ((self currentNotePosition - 6) * 6.25) + 1 ]",
+messageSends: ["ifTrue:ifFalse:", "+", "*", "currentNotePosition", "-", "<"],
+referencedClasses: []
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
 "_currentNotePosition",
 smalltalk.method({
 selector: "currentNotePosition",
@@ -673,24 +696,15 @@ selector: "renderNoteOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-var $1,$2,$6,$5,$4,$3,$7;
+var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
-smalltalk.send($1,"_class_",[smalltalk.send("image note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
-$2=$1;
-$6=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
-if(smalltalk.assert($6)){
-$5="-slashed";
-} else {
-$5="";
-};
-$4=smalltalk.send("images/note","__comma",[$5]);
-$3=smalltalk.send($4,"__comma",[".svg"]);
-smalltalk.send($2,"_src_",[$3]);
-$7=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]),"_asString",[])]),"__comma",["%;"])]);
+smalltalk.send($1,"_class_",[smalltalk.send("note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
+smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversed",[])]),"__comma",[".svg"])]);
+$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(self,"_currentNoteBottom",[]),"_asString",[])]),"__comma",["%;"])]);
 return self},
 args: ["html"],
-source: "renderNoteOn: html\x0a\x09html img\x0a   \x09 \x09class: 'image note i' , self currentNotePosition asString; \x0a        src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';\x0a        style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.",
-messageSends: ["class:", ",", "asString", "currentNotePosition", "img", "src:", "ifTrue:ifFalse:", "includes:", "style:", "+", "*"],
+source: "renderNoteOn: html\x0a\x09html img\x0a   \x09\x09class: 'note i' , self currentNotePosition asString; \x0a        src: 'images/note' , self slashedOrReversed , '.svg';\x0a    \x09style: 'bottom: ' , self currentNoteBottom asString , '%;'.",
+messageSends: ["class:", ",", "asString", "currentNotePosition", "img", "src:", "slashedOrReversed", "style:", "currentNoteBottom"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -718,6 +732,36 @@ return self},
 args: ["html"],
 source: "renderOn: html\x0a    sheet := html div class: 'sheet'.\x0a\x09\x09sheet\x0a\x09\x09\x09with: [\x0a\x09\x09\x09\x09self \x0a\x09\x09\x09\x09\x09renderKeyOn: html;\x0a\x09\x09\x09\x09\x09renderLinesOn: html.\x0a\x09\x09note := html div with: [ self renderNoteOn: html ]]",
 messageSends: ["class:", "div", "with:", "renderKeyOn:", "renderLinesOn:", "renderNoteOn:"],
+referencedClasses: []
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_slashedOrReversed",
+smalltalk.method({
+selector: "slashedOrReversed",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1,$2,$3;
+var string;
+string="";
+$1=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
+if(smalltalk.assert($1)){
+string="-slashed";
+string;
+};
+$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__gt",[(7)]);
+if(smalltalk.assert($2)){
+string=smalltalk.send(string,"__comma",["-reversed"]);
+string;
+};
+$3=string;
+return $3;
+},
+args: [],
+source: "slashedOrReversed\x0a\x09| string |\x0a    string := ''.\x0a\x09\x0a    (#(1 13) includes: self currentNotePosition) \x0a    \x09ifTrue: [ string := '-slashed' ].\x0a    \x0a    self currentNotePosition > 7 \x0a    \x09ifTrue: [ string := string , '-reversed' ].\x0a\x0a\x09^ string",
+messageSends: ["ifTrue:", "includes:", "currentNotePosition", ",", ">"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);

@@ -21,7 +21,7 @@ body {
 	color: @black;
 }
 
-.line { background-color: @black }
+.stick, .line { background-color: @black }
 
 button { 
 	background-color: @white;
@@ -128,7 +128,12 @@ button {
 .note {
 	position: absolute;
 	left: 35%;
-	height: 12.5%;
+	height: 50%;
+}
+
+.stick {
+	position: absolute;
+	left: 35%;
 }
 
 .line {
@@ -174,6 +179,11 @@ button {
 	border: 0;
 	height: 2%;
 	.rounded-corners(5px);
+}
+
+.stick {
+	width: 2px;
+	height: 50%;
 }
 
 .bubble, .sheet { .rounded-corners(15px) }

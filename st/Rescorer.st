@@ -188,6 +188,19 @@ game: aGameWidget
 
 keyName
 	^ keyName ifNil: [ keyName := #G ]
+!
+
+slashedOrReversed
+	| string |
+    string := ''.
+	
+    (#(1 13) includes: self currentNotePosition) 
+    	ifTrue: [ string := '-slashed' ].
+    
+    self currentNotePosition > 7 
+    	ifTrue: [ string := string , '-reversed' ].
+
+	^ string
 ! !
 
 !SheetWidget methodsFor: 'actions'!
@@ -198,6 +211,12 @@ nextNote
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
+
+currentNoteBottom
+	^ self currentNotePosition < 8
+    	ifTrue: [ (self currentNotePosition * 6.25) + 1 ]
+      	ifFalse: [ ((self currentNotePosition - 6) * 6.25) + 1 ]
+!
 
 renderKeyOn: html
 key := 
@@ -215,9 +234,9 @@ renderLinesOn: html
 
 renderNoteOn: html
 	html img
-   	 	class: 'image note i' , self currentNotePosition asString; 
-        src: 'images/note' , ((#(1 13) includes: self currentNotePosition) ifTrue: ['-slashed'] ifFalse: ['']) , '.svg';
-        style: 'bottom: ' , ((self currentNotePosition * 6.25) + 1) asString , '%;'.
+   		class: 'note i' , self currentNotePosition asString; 
+        src: 'images/note' , self slashedOrReversed , '.svg';
+    	style: 'bottom: ' , self currentNoteBottom asString , '%;'.
 !
 
 renderOn: html

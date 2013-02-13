@@ -394,6 +394,24 @@ return $1;
 smalltalk.SheetWidget);
 
 smalltalk.addMethod(
+"_currentNoteBottom",
+smalltalk.method({
+selector: "currentNoteBottom",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__lt",[(8)]);
+if(smalltalk.assert($2)){
+$1=smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]);
+} else {
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__minus",[(6)]),"__star",[(6.25)]),"__plus",[(1)]);
+};
+return $1;
+}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
 "_currentNotePosition",
 smalltalk.method({
 selector: "currentNotePosition",
@@ -507,20 +525,11 @@ smalltalk.method({
 selector: "renderNoteOn:",
 fn: function (html){
 var self=this;
-var $1,$2,$6,$5,$4,$3,$7;
+var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
-smalltalk.send($1,"_class_",[smalltalk.send("image note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
-$2=$1;
-$6=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
-if(smalltalk.assert($6)){
-$5="-slashed";
-} else {
-$5="";
-};
-$4=smalltalk.send("images/note","__comma",[$5]);
-$3=smalltalk.send($4,"__comma",[".svg"]);
-smalltalk.send($2,"_src_",[$3]);
-$7=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__star",[(6.25)]),"__plus",[(1)]),"_asString",[])]),"__comma",["%;"])]);
+smalltalk.send($1,"_class_",[smalltalk.send("note i","__comma",[smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"_asString",[])])]);
+smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversed",[])]),"__comma",[".svg"])]);
+$2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(self,"_currentNoteBottom",[]),"_asString",[])]),"__comma",["%;"])]);
 return self}
 }),
 smalltalk.SheetWidget);
@@ -544,6 +553,31 @@ return smalltalk.send(self,"_renderNoteOn_",[html]);
 return self["@note"];
 })]);
 return self}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_slashedOrReversed",
+smalltalk.method({
+selector: "slashedOrReversed",
+fn: function (){
+var self=this;
+var $1,$2,$3;
+var string;
+string="";
+$1=smalltalk.send([(1), (13)],"_includes_",[smalltalk.send(self,"_currentNotePosition",[])]);
+if(smalltalk.assert($1)){
+string="-slashed";
+string;
+};
+$2=smalltalk.send(smalltalk.send(self,"_currentNotePosition",[]),"__gt",[(7)]);
+if(smalltalk.assert($2)){
+string=smalltalk.send(string,"__comma",["-reversed"]);
+string;
+};
+$3=string;
+return $3;
+}
 }),
 smalltalk.SheetWidget);
 
