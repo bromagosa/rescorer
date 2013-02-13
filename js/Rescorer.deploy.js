@@ -1,5 +1,5 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'audio'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'errorAudio'], 'Rescorer');
 smalltalk.addMethod(
 "_checkNote_",
 smalltalk.method({
@@ -62,6 +62,32 @@ return $1;
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_playErrorSound",
+smalltalk.method({
+selector: "playErrorSound",
+fn: function (){
+var self=this;
+ $('audio.error')[0].play() ;
+;
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderErrorAudioOn_",
+smalltalk.method({
+selector: "renderErrorAudioOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+$1=smalltalk.send(html,"_audio",[]);
+smalltalk.send($1,"_class_",["error"]);
+$2=smalltalk.send($1,"_src_",["sounds/error.ogg"]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
@@ -74,6 +100,9 @@ $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
 $3=smalltalk.send(html,"_div",[]);
 smalltalk.send($3,"_class_",["button-container"]);
 $4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
 return self}
 }),
 smalltalk.GameWidget);
@@ -103,7 +132,10 @@ smalltalk.method({
 selector: "wrongAnswerAction",
 fn: function (){
 var self=this;
-smalltalk.send(window,"_alert_",["Fatal!"]);
+smalltalk.send(self,"_playErrorSound",[]);
+smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
 return self}
 }),
 smalltalk.GameWidget);
@@ -574,7 +606,7 @@ smalltalk.method({
 selector: "play",
 fn: function (){
 var self=this;
- $("audio")[0].play() ;
+ $("audio.note")[0].play() ;
 ;
 return self}
 }),
@@ -618,12 +650,14 @@ smalltalk.method({
 selector: "renderNoteOn:",
 fn: function (html){
 var self=this;
-var $1,$2;
+var $1,$2,$3,$4;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssClass",[])]);
 smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_imagePath",[])]);
 $2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssStyle",[])]);
-smalltalk.send(smalltalk.send(html,"_audio",[]),"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
+$3=smalltalk.send(html,"_audio",[]);
+smalltalk.send($3,"_class_",["note"]);
+$4=smalltalk.send($3,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
 return self}
 }),
 smalltalk.SheetWidget);

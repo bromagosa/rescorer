@@ -1,5 +1,5 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'audio'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'errorAudio'], 'Rescorer');
 smalltalk.addMethod(
 "_checkNote_",
 smalltalk.method({
@@ -82,6 +82,42 @@ referencedClasses: ["NoteButtonsWidget"]
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_playErrorSound",
+smalltalk.method({
+selector: "playErrorSound",
+category: 'actions',
+fn: function (){
+var self=this;
+ $('audio.error')[0].play() ;
+;
+return self},
+args: [],
+source: "playErrorSound\x0a\x09< $('audio.error')[0].play() >",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderErrorAudioOn_",
+smalltalk.method({
+selector: "renderErrorAudioOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+var $1,$2;
+$1=smalltalk.send(html,"_audio",[]);
+smalltalk.send($1,"_class_",["error"]);
+$2=smalltalk.send($1,"_src_",["sounds/error.ogg"]);
+return self},
+args: ["html"],
+source: "renderErrorAudioOn: html\x0a\x09html audio \x0a    \x09class: 'error';\x0a        src: 'sounds/error.ogg'",
+messageSends: ["class:", "audio", "src:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
@@ -95,10 +131,13 @@ $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
 $3=smalltalk.send(html,"_div",[]);
 smalltalk.send($3,"_class_",["button-container"]);
 $4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
 return self},
 args: ["html"],
-source: "renderOn: html\x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: self sheetWidget.\x0a\x09html div \x0a    \x09class: 'button-container';\x0a    \x09with: self noteButtonsWidget.",
-messageSends: ["class:", "div", "with:", "sheetWidget", "noteButtonsWidget"],
+source: "renderOn: html\x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: self sheetWidget.\x0a\x09html div \x0a    \x09class: 'button-container';\x0a    \x09with: self noteButtonsWidget.\x0a\x09errorAudio := html div with: [ self renderErrorAudioOn: html ]",
+messageSends: ["class:", "div", "with:", "sheetWidget", "noteButtonsWidget", "renderErrorAudioOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -134,11 +173,14 @@ selector: "wrongAnswerAction",
 category: 'actions',
 fn: function (){
 var self=this;
-smalltalk.send(window,"_alert_",["Fatal!"]);
+smalltalk.send(self,"_playErrorSound",[]);
+smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
 return self},
 args: [],
-source: "wrongAnswerAction\x0a\x09window alert: 'Fatal!'",
-messageSends: ["alert:"],
+source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
+messageSends: ["playErrorSound", "contents:", "renderErrorAudioOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -755,11 +797,11 @@ selector: "play",
 category: 'actions',
 fn: function (){
 var self=this;
- $("audio")[0].play() ;
+ $("audio.note")[0].play() ;
 ;
 return self},
 args: [],
-source: "play\x0a\x09< $(\x22audio\x22)[0].play() >",
+source: "play\x0a\x09< $(\x22audio.note\x22)[0].play() >",
 messageSends: [],
 referencedClasses: []
 }),
@@ -814,16 +856,18 @@ selector: "renderNoteOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-var $1,$2;
+var $1,$2,$3,$4;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssClass",[])]);
 smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_imagePath",[])]);
 $2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssStyle",[])]);
-smalltalk.send(smalltalk.send(html,"_audio",[]),"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
+$3=smalltalk.send(html,"_audio",[]);
+smalltalk.send($3,"_class_",["note"]);
+$4=smalltalk.send($3,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
 return self},
 args: ["html"],
-source: "renderNoteOn: html\x0a\x09html img\x0a   \x09\x09class: self currentNote cssClass; \x0a        src: self currentNote imagePath;\x0a    \x09style: self currentNote cssStyle.\x0a        \x0a\x09html audio src: self currentNote audioPath.",
-messageSends: ["class:", "cssClass", "currentNote", "img", "src:", "imagePath", "style:", "cssStyle", "audioPath", "audio"],
+source: "renderNoteOn: html\x0a\x09html img\x0a   \x09\x09class: self currentNote cssClass; \x0a        src: self currentNote imagePath;\x0a    \x09style: self currentNote cssStyle.\x0a        \x0a\x09html audio \x0a    \x09class: 'note';\x0a    \x09src: self currentNote audioPath.",
+messageSends: ["class:", "cssClass", "currentNote", "img", "src:", "imagePath", "style:", "cssStyle", "audio", "audioPath"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);

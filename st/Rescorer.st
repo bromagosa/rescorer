@@ -1,6 +1,6 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #GameWidget
-	instanceVariableNames: 'sheetWidget noteButtonsWidget audio'
+	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
@@ -26,11 +26,22 @@ correctAnswerAction
 	self sheetWidget nextNote
 !
 
+playErrorSound
+	< $('audio.error')[0].play() >
+!
+
 wrongAnswerAction
-	window alert: 'Fatal!!'
+	self playErrorSound.
+    errorAudio contents: [ :html | self renderErrorAudioOn: html ]
 ! !
 
 !GameWidget methodsFor: 'rendering'!
+
+renderErrorAudioOn: html
+	html audio 
+    	class: 'error';
+        src: 'sounds/error.ogg'
+!
 
 renderOn: html
 	html div 
@@ -39,6 +50,7 @@ renderOn: html
 	html div 
     	class: 'button-container';
     	with: self noteButtonsWidget.
+	errorAudio := html div with: [ self renderErrorAudioOn: html ]
 ! !
 
 !GameWidget methodsFor: 'testing'!
@@ -235,7 +247,7 @@ nextNote
 !
 
 play
-	< $("audio")[0].play() >
+	< $("audio.note")[0].play() >
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -260,7 +272,9 @@ renderNoteOn: html
         src: self currentNote imagePath;
     	style: self currentNote cssStyle.
         
-	html audio src: self currentNote audioPath.
+	html audio 
+    	class: 'note';
+    	src: self currentNote audioPath.
 !
 
 renderOn: html
