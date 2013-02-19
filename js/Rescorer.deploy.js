@@ -435,7 +435,26 @@ return $1;
 smalltalk.Note.klass);
 
 
-smalltalk.addClass('NoteButtonsWidget', smalltalk.Widget, ['noteNamesDictionary', 'game'], 'Rescorer');
+smalltalk.addClass('NoteButtonsWidget', smalltalk.Widget, ['noteNamesDictionary', 'keysDictionary', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_bindKeyDownActions",
+smalltalk.method({
+selector: "bindKeyDownActions",
+fn: function (){
+var self=this;
+var $1,$3,$2;
+$1=smalltalk.send(window,"_asJQuery",[]);
+$2=(function(event){
+$3=smalltalk.send(smalltalk.send(smalltalk.send(self,"_keysDictionary",[]),"_keys",[]),"_includes_",[smalltalk.send(event,"_keyCode",[])]);
+if(smalltalk.assert($3)){
+return smalltalk.send(smalltalk.send(self,"_game",[]),"_checkNote_",[smalltalk.send(smalltalk.send(self,"_keysDictionary",[]),"_at_",[smalltalk.send(event,"_keyCode",[])])]);
+};
+});
+smalltalk.send($1,"_keydown_",[$2]);
+return self}
+}),
+smalltalk.NoteButtonsWidget);
+
 smalltalk.addMethod(
 "_game",
 smalltalk.method({
@@ -457,6 +476,35 @@ fn: function (aGameWidget){
 var self=this;
 self["@game"]=aGameWidget;
 return self}
+}),
+smalltalk.NoteButtonsWidget);
+
+smalltalk.addMethod(
+"_keysDictionary",
+smalltalk.method({
+selector: "keysDictionary",
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@keysDictionary"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",[(65),smalltalk.symbolFor("C")]);
+smalltalk.send($3,"_at_put_",[(83),smalltalk.symbolFor("D")]);
+smalltalk.send($3,"_at_put_",[(68),smalltalk.symbolFor("E")]);
+smalltalk.send($3,"_at_put_",[(70),smalltalk.symbolFor("F")]);
+smalltalk.send($3,"_at_put_",[(71),smalltalk.symbolFor("G")]);
+smalltalk.send($3,"_at_put_",[(72),smalltalk.symbolFor("A")]);
+smalltalk.send($3,"_at_put_",[(74),smalltalk.symbolFor("B")]);
+smalltalk.send($3,"_at_put_",[(75),smalltalk.symbolFor("C")]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@keysDictionary"]=$4;
+$1=self["@keysDictionary"];
+} else {
+$1=$2;
+};
+return $1;
+}
 }),
 smalltalk.NoteButtonsWidget);
 
@@ -495,6 +543,7 @@ selector: "renderOn:",
 fn: function (html){
 var self=this;
 var $1,$2;
+smalltalk.send(self,"_bindKeyDownActions",[]);
 smalltalk.send(smalltalk.send(smalltalk.send(self,"_noteNamesDictionary",[]),"_associations",[]),"_do_",[(function(each){
 $1=smalltalk.send(html,"_button",[]);
 smalltalk.send($1,"_with_",[smalltalk.send(each,"_key",[])]);

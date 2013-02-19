@@ -178,7 +178,7 @@ position: aNumber key: aKeySymbol
 ! !
 
 Widget subclass: #NoteButtonsWidget
-	instanceVariableNames: 'noteNamesDictionary game'
+	instanceVariableNames: 'noteNamesDictionary keysDictionary game'
 	package: 'Rescorer'!
 
 !NoteButtonsWidget methodsFor: 'accessing'!
@@ -189,6 +189,20 @@ game
 
 game: aGameWidget
 	game := aGameWidget
+!
+
+keysDictionary
+	^ keysDictionary ifNil: 
+    	[ keysDictionary := Dictionary new
+        	at: 65 put: #C;
+            at: 83 put: #D;
+            at: 68 put: #E;
+            at: 70 put: #F;
+            at: 71 put: #G;
+            at: 72 put: #A;
+            at: 74 put: #B;
+            at: 75 put: #C;
+            yourself ]
 !
 
 noteNamesDictionary
@@ -206,7 +220,15 @@ noteNamesDictionary
 
 !NoteButtonsWidget methodsFor: 'rendering'!
 
+bindKeyDownActions
+	window asJQuery 
+    	keydown: [ :event | 
+        	(self keysDictionary keys includes: event keyCode) 
+            	ifTrue: [ self game checkNote: (self keysDictionary at: event keyCode) ]]
+!
+
 renderOn: html
+	self bindKeyDownActions.
 	self noteNamesDictionary associations
     	do: [:each | 
 			html button 
