@@ -22,7 +22,7 @@ checkNote: aNoteSymbol
 !
 
 correctAnswerAction
-	self sheetWidget play.
+	self sheetWidget currentNote play.
 	self sheetWidget nextNote
 !
 
@@ -37,6 +37,14 @@ wrongAnswerAction
 
 !GameWidget methodsFor: 'rendering'!
 
+renderAudioElementsOn: html
+	#('A' 'B' 'C' 'D' 'E' 'F' 'G') do: [ :eachNote | 
+    	#('1' '2' '3' '4') do: [ :eachOctave | 
+        	html audio
+  				class: 'note ' , eachNote , eachOctave;
+  				src: 'sounds/' , eachNote , eachOctave , '.ogg' ]].
+!
+
 renderErrorAudioOn: html
 	html audio 
     	class: 'error';
@@ -50,6 +58,7 @@ renderOn: html
 	html div 
     	class: 'button-container';
     	with: self noteButtonsWidget.
+    self renderAudioElementsOn: html.
 	errorAudio := html div with: [ self renderErrorAudioOn: html ]
 ! !
 
@@ -65,10 +74,6 @@ Object subclass: #Note
 
 !Note methodsFor: 'accessing'!
 
-audioPath
-	^ 'sounds/' , self soundFile
-!
-
 octave
 	^ octave
 !
@@ -83,10 +88,6 @@ position
 
 position: aNumber
 	position := aNumber
-!
-
-soundFile
-	^ self symbol asString , self octave asString , '.ogg'
 !
 
 symbol
@@ -130,6 +131,12 @@ slashedOrReversedString
 	^ string
 ! !
 
+!Note methodsFor: 'actions'!
+
+play
+	self class playNote: self symbol asString octave: self octave asString
+! !
+
 Note class instanceVariableNames: 'noteDictionary octaveDictionary'!
 
 !Note class methodsFor: 'accessing'!
@@ -169,6 +176,11 @@ octaveDictionary
 ! !
 
 !Note class methodsFor: 'instance creation'!
+
+playNote: aNote octave: anOctave
+	< $('audio.note.' + aNote + anOctave)[0].src = 'sounds/' + aNote + anOctave + '.ogg';
+     $('audio.note.' + aNote + anOctave)[0].play(); >
+!
 
 position: aNumber key: aKeySymbol
 	^ self new 
@@ -233,7 +245,7 @@ renderOn: html
     	do: [:each | 
 			html button 
             	with: each key;
-                onClick: [ self game checkNote: each value ]]
+                onClick: [ self game checkNote: each value ]].
 ! !
 
 Widget subclass: #SheetWidget
@@ -256,6 +268,9 @@ game: aGameWidget
 
 keyName
 	^ keyName ifNil: [ keyName := #G ]
+!
+
+play
 ! !
 
 !SheetWidget methodsFor: 'actions'!
@@ -266,10 +281,6 @@ nextNote
     currentNote ifNotNil: [ notePositions remove: currentNote position ].
 	currentNote := Note position: notePositions atRandom key: self keyName.
 	noteDiv ifNotNil: [ noteDiv contents: [ :html | self renderNoteOn: html ]]
-!
-
-play
-	< $("audio.note")[0].play() >
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -293,10 +304,6 @@ renderNoteOn: html
    		class: self currentNote cssClass; 
         src: self currentNote imagePath;
     	style: self currentNote cssStyle.
-        
-	html audio 
-    	class: 'note';
-    	src: self currentNote audioPath.
 !
 
 renderOn: html

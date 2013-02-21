@@ -23,7 +23,7 @@ smalltalk.method({
 selector: "correctAnswerAction",
 fn: function (){
 var self=this;
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_play",[]);
+smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_play",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
 return self}
 }),
@@ -74,6 +74,25 @@ return self}
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_renderAudioElementsOn_",
+smalltalk.method({
+selector: "renderAudioElementsOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+smalltalk.send(["A", "B", "C", "D", "E", "F", "G"],"_do_",[(function(eachNote){
+return smalltalk.send(["1", "2", "3", "4"],"_do_",[(function(eachOctave){
+$1=smalltalk.send(html,"_audio",[]);
+smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send("note ","__comma",[eachNote]),"__comma",[eachOctave])]);
+$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("sounds/","__comma",[eachNote]),"__comma",[eachOctave]),"__comma",[".ogg"])]);
+return $2;
+})]);
+})]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_renderErrorAudioOn_",
 smalltalk.method({
 selector: "renderErrorAudioOn:",
@@ -100,6 +119,7 @@ $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
 $3=smalltalk.send(html,"_div",[]);
 smalltalk.send($3,"_class_",["button-container"]);
 $4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+smalltalk.send(self,"_renderAudioElementsOn_",[html]);
 self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
@@ -143,19 +163,6 @@ smalltalk.GameWidget);
 
 
 smalltalk.addClass('Note', smalltalk.Object, ['position', 'symbol', 'octave'], 'Rescorer');
-smalltalk.addMethod(
-"_audioPath",
-smalltalk.method({
-selector: "audioPath",
-fn: function (){
-var self=this;
-var $1;
-$1=smalltalk.send("sounds/","__comma",[smalltalk.send(self,"_soundFile",[])]);
-return $1;
-}
-}),
-smalltalk.Note);
-
 smalltalk.addMethod(
 "_bottom",
 smalltalk.method({
@@ -238,6 +245,17 @@ return self}
 smalltalk.Note);
 
 smalltalk.addMethod(
+"_play",
+smalltalk.method({
+selector: "play",
+fn: function (){
+var self=this;
+smalltalk.send(smalltalk.send(self,"_class",[]),"_playNote_octave_",[smalltalk.send(smalltalk.send(self,"_symbol",[]),"_asString",[]),smalltalk.send(smalltalk.send(self,"_octave",[]),"_asString",[])]);
+return self}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
 "_position",
 smalltalk.method({
 selector: "position",
@@ -284,19 +302,6 @@ string;
 };
 $3=string;
 return $3;
-}
-}),
-smalltalk.Note);
-
-smalltalk.addMethod(
-"_soundFile",
-smalltalk.method({
-selector: "soundFile",
-fn: function (){
-var self=this;
-var $1;
-$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_symbol",[]),"_asString",[]),"__comma",[smalltalk.send(smalltalk.send(self,"_octave",[]),"_asString",[])]),"__comma",[".ogg"]);
-return $1;
 }
 }),
 smalltalk.Note);
@@ -414,6 +419,19 @@ $1=$2;
 };
 return $1;
 }
+}),
+smalltalk.Note.klass);
+
+smalltalk.addMethod(
+"_playNote_octave_",
+smalltalk.method({
+selector: "playNote:octave:",
+fn: function (aNote,anOctave){
+var self=this;
+ $('audio.note.' + aNote + anOctave)[0].src = 'sounds/' + aNote + anOctave + '.ogg';
+     $('audio.note.' + aNote + anOctave)[0].play(); ;
+;
+return self}
 }),
 smalltalk.Note.klass);
 
@@ -655,8 +673,6 @@ smalltalk.method({
 selector: "play",
 fn: function (){
 var self=this;
- $("audio.note")[0].play() ;
-;
 return self}
 }),
 smalltalk.SheetWidget);
@@ -699,14 +715,11 @@ smalltalk.method({
 selector: "renderNoteOn:",
 fn: function (html){
 var self=this;
-var $1,$2,$3,$4;
+var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssClass",[])]);
 smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_imagePath",[])]);
 $2=smalltalk.send($1,"_style_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_cssStyle",[])]);
-$3=smalltalk.send(html,"_audio",[]);
-smalltalk.send($3,"_class_",["note"]);
-$4=smalltalk.send($3,"_src_",[smalltalk.send(smalltalk.send(self,"_currentNote",[]),"_audioPath",[])]);
 return self}
 }),
 smalltalk.SheetWidget);
