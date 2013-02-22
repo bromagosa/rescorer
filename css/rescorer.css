@@ -52,6 +52,15 @@ button:hover {
 /*
 	POSITIONS AND SIZES
 */
+html,
+body {
+  height: 100%;
+}
+.wrapper {
+  position: relative;
+  width: 960px;
+  height: 100%;
+}
 .bar {
   width: 100%;
   height: 50px;
@@ -70,9 +79,9 @@ button:hover {
 .bubble {
   height: 25%;
   width: 94%;
-  position: fixed;
+  position: absolute;
   left: 3%;
-  top: 75px;
+  top: 65px;
 }
 .tip {
   height: 45%;
@@ -80,19 +89,19 @@ button:hover {
   right: 0;
   bottom: -35%;
 }
-.button-container,
 .sheet-container {
-  position: fixed;
-  width: 50%;
+  position: absolute;
+  width: 60%;
   left: 3%;
-}
-.sheet-container {
   height: 40%;
   bottom: 130px;
 }
 .button-container {
+  position: absolute;
+  width: 60%;
+  left: 3%;
   height: 40px;
-  bottom: 90px;
+  bottom: 70px;
 }
 .button-container > button {
   height: 100%;
@@ -135,13 +144,16 @@ button:hover {
 }
 .face {
   height: 50%;
-  position: fixed;
+  position: absolute;
   bottom: 50px;
   right: 0;
 }
 /*
 	SHAPES, MARGINS, PADDINGS
 */
+.wrapper {
+  margin: 0 auto;
+}
 button {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;

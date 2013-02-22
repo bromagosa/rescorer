@@ -1,6 +1,6 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #GameWidget
-	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio mood faceImg'
+	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio mood faceImg bubbleSpan'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
@@ -65,6 +65,29 @@ renderAudioElementsOn: html
   				src: 'sounds/' , eachNote , eachOctave , '.ogg' ]].
 !
 
+renderBubbleOn: html
+	html div 
+    	class: 'bubble';
+    	contents: [ :h | 
+            h img 
+            	class: 'tip';
+                src: 'images/bubble-tip.svg'.
+			bubbleSpan := h span ]
+!
+
+renderContentOn: html
+	faceImg := self renderFaceOn: html.
+	self renderBubbleOn: html.
+	html div 
+    	class: 'sheet-container';
+    	with: self sheetWidget.
+	html div 
+    	class: 'button-container';
+    	with: self noteButtonsWidget.
+    self renderAudioElementsOn: html.
+	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+!
+
 renderErrorAudioOn: html
 	html audio 
     	class: 'error';
@@ -78,15 +101,9 @@ renderFaceOn: html
 !
 
 renderOn: html
-	faceImg := self renderFaceOn: html.
 	html div 
-    	class: 'sheet-container';
-    	with: self sheetWidget.
-	html div 
-    	class: 'button-container';
-    	with: self noteButtonsWidget.
-    self renderAudioElementsOn: html.
-	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+    	class: 'wrapper';
+        contents: [:h | self renderContentOn: h ].
 !
 
 updateFace
