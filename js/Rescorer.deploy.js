@@ -1,5 +1,29 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'errorAudio'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceImg'], 'Rescorer');
+smalltalk.addMethod(
+"_beHappy",
+smalltalk.method({
+selector: "beHappy",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_mood_",["happy"]);
+smalltalk.send(self,"_updateFace",[]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_beSad",
+smalltalk.method({
+selector: "beSad",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_mood_",["sad"]);
+smalltalk.send(self,"_updateFace",[]);
+return self}
+}),
+smalltalk.GameWidget);
+
 smalltalk.addMethod(
 "_checkNote_",
 smalltalk.method({
@@ -24,6 +48,7 @@ selector: "correctAnswerAction",
 fn: function (){
 var self=this;
 smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_play",[]);
+smalltalk.send(self,"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
 return self}
 }),
@@ -39,6 +64,36 @@ var $1;
 $1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_symbol",[]),"__eq",[aNoteSymbol]);
 return $1;
 }
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_mood",
+smalltalk.method({
+selector: "mood",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@mood"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@mood"]="happy";
+$1=self["@mood"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_mood_",
+smalltalk.method({
+selector: "mood:",
+fn: function (aString){
+var self=this;
+self["@mood"]=aString;
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -107,12 +162,29 @@ return self}
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_renderFaceOn_",
+smalltalk.method({
+selector: "renderFaceOn:",
+fn: function (html){
+var self=this;
+var $2,$3,$1;
+$2=smalltalk.send(html,"_img",[]);
+smalltalk.send($2,"_class_",["image face"]);
+$3=smalltalk.send($2,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(self,"_mood",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+$1=$3;
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
 fn: function (html){
 var self=this;
 var $1,$2,$3,$4;
+self["@faceImg"]=smalltalk.send(self,"_renderFaceOn_",[html]);
 $1=smalltalk.send(html,"_div",[]);
 smalltalk.send($1,"_class_",["sheet-container"]);
 $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
@@ -147,12 +219,24 @@ return $1;
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_updateFace",
+smalltalk.method({
+selector: "updateFace",
+fn: function (){
+var self=this;
+smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(self,"_mood",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_wrongAnswerAction",
 smalltalk.method({
 selector: "wrongAnswerAction",
 fn: function (){
 var self=this;
 smalltalk.send(self,"_playErrorSound",[]);
+smalltalk.send(self,"_beSad",[]);
 smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);

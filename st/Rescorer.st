@@ -1,9 +1,17 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #GameWidget
-	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio'
+	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio mood faceImg'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
+
+mood
+	^ mood ifNil: [ mood := 'happy' ]
+!
+
+mood: aString
+	mood := aString
+!
 
 noteButtonsWidget
 	^ noteButtonsWidget ifNil: [ noteButtonsWidget := NoteButtonsWidget new game: self ]
@@ -15,6 +23,16 @@ sheetWidget
 
 !GameWidget methodsFor: 'actions'!
 
+beHappy
+	self mood: 'happy'.
+    self updateFace.
+!
+
+beSad
+	self mood: 'sad'.
+    self updateFace.
+!
+
 checkNote: aNoteSymbol
 	(self isNoteCorrect: aNoteSymbol) 
     	ifTrue: [ self correctAnswerAction ]
@@ -23,6 +41,7 @@ checkNote: aNoteSymbol
 
 correctAnswerAction
 	self sheetWidget currentNote play.
+    self beHappy.
 	self sheetWidget nextNote
 !
 
@@ -32,6 +51,7 @@ playErrorSound
 
 wrongAnswerAction
 	self playErrorSound.
+    self beSad.
     errorAudio contents: [ :html | self renderErrorAudioOn: html ]
 ! !
 
@@ -51,7 +71,14 @@ renderErrorAudioOn: html
         src: 'sounds/error.ogg'
 !
 
+renderFaceOn: html
+	^ html img
+    	class: 'image face';
+        src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'.
+!
+
 renderOn: html
+	faceImg := self renderFaceOn: html.
 	html div 
     	class: 'sheet-container';
     	with: self sheetWidget.
@@ -60,6 +87,10 @@ renderOn: html
     	with: self noteButtonsWidget.
     self renderAudioElementsOn: html.
 	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+!
+
+updateFace
+	faceImg src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'
 ! !
 
 !GameWidget methodsFor: 'testing'!
