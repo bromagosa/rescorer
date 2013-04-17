@@ -55,7 +55,7 @@ $3=smalltalk.send(h,"_img",[]);
 smalltalk.send($3,"_class_",["tip"]);
 $4=smalltalk.send($3,"_src_",["images/bubble-tip.svg"]);
 $4;
-self["@bubbleSpan"]=smalltalk.send(h,"_span",[]);
+self["@bubbleSpan"]=smalltalk.send(smalltalk.send(h,"_span",[]),"_contents_",["Comencem!"]);
 return self["@bubbleSpan"];
 })]);
 return self}
@@ -327,12 +327,18 @@ smalltalk.addMethod(
 "_renderAudioElementsOn_",
 smalltalk.method({
 selector: "renderAudioElementsOn:",
-fn: function (html) {
-    var self = this;
-    var $1, $2;
-    smalltalk.send(["A", "B", "C", "D", "E", "F", "G"], "_do_", [function (eachNote) {return smalltalk.send(["1", "2", "3", "4"], "_do_", [function (eachOctave) {$1 = smalltalk.send(html, "_audio", []);smalltalk.send($1, "_class_", [smalltalk.send(smalltalk.send("note ", "__comma", [eachNote]), "__comma", [eachOctave])]);$2 = smalltalk.send($1, "_src_", [smalltalk.send(smalltalk.send(smalltalk.send("sounds/", "__comma", [eachNote]), "__comma", [eachOctave]), "__comma", [".ogg"])]);return $2;}]);}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+var $1,$2;
+smalltalk.send(["A", "B", "C", "D", "E", "F", "G"],"_do_",[(function(eachNote){
+return smalltalk.send(["1", "2", "3", "4", "5"],"_do_",[(function(eachOctave){
+$1=smalltalk.send(html,"_audio",[]);
+smalltalk.send($1,"_class_",[smalltalk.send(smalltalk.send("note ","__comma",[eachNote]),"__comma",[eachOctave])]);
+$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("sounds/","__comma",[eachNote]),"__comma",[eachOctave]),"__comma",[".ogg"])]);
+return $2;
+})]);
+})]);
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -493,7 +499,7 @@ smalltalk.method({
 selector: "renderSpeedSelectionStageOn:",
 fn: function (html){
 var self=this;
-var $1,$2;
+var $1,$3,$5,$7,$6,$4,$2;
 var stage;
 stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
 $1=smalltalk.send(stage,"_buttons",[]);
@@ -509,11 +515,22 @@ smalltalk.send($1,"_at_put_",["Allegro",(function(){
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(130)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
-$2=smalltalk.send($1,"_at_put_",["Presto",(function(){
+smalltalk.send($1,"_at_put_",["Presto",(function(){
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(170)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
-smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["I a quina velocitat?"]);
+$3=$1;
+$4=(function(){
+$5=smalltalk.send(self,"_sheetWidget",[]);
+$7=smalltalk.send(smalltalk.send(smalltalk.send(window,"_prompt_",["BPM?"]),"_asNumber",[]),"__gt",[(0)]);
+if(! smalltalk.assert($7)){
+$6=(70);
+};
+smalltalk.send($5,"_bpm_",[$6]);
+return smalltalk.send(self,"_nextStage",[]);
+});
+$2=smalltalk.send($3,"_at_put_",["Custom",$4]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["I a quin tempo?"]);
 smalltalk.send(html,"_with_",[stage]);
 return self}
 }),
@@ -626,14 +643,32 @@ fn: function () {
 smalltalk.Note);
 
 smalltalk.addMethod(
+"_extraSlashesString",
+smalltalk.method({
+selector: "extraSlashesString",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=smalltalk.send(smalltalk.send(self,"_position",[]),"__gt",[(13)]);
+if(smalltalk.assert($2)){
+$1="-extra";
+} else {
+$1="";
+};
+return $1;
+}
+}),
+smalltalk.Note);
+
+smalltalk.addMethod(
 "_imagePath",
 smalltalk.method({
 selector: "imagePath",
-fn: function () {
-    var self = this;
-    var $1;
-    $1 = smalltalk.send(smalltalk.send("images/note", "__comma", [smalltalk.send(self, "_slashedOrReversedString", [])]), "__comma", [".svg"]);
-    return $1;
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversedString",[])]),"__comma",[smalltalk.send(self,"_extraSlashesString",[])]),"__comma",[".svg"]);
+return $1;
 }
 }),
 smalltalk.Note);
@@ -704,21 +739,23 @@ smalltalk.addMethod(
 "_slashedOrReversedString",
 smalltalk.method({
 selector: "slashedOrReversedString",
-fn: function () {
-    var self = this;
-    var $1, $2, $3;
-    var string;
-    string = "";
-    $1 = smalltalk.send(smalltalk.send(smalltalk.send(self, "_position", []), "__eq", [1]), "_or_", [function () {return smalltalk.send(smalltalk.send(self, "_position", []), "__eq", [13]);}]);
-    if (smalltalk.assert($1)) {
-        string = "-slashed";
-    }
-    $2 = smalltalk.send(smalltalk.send(self, "_position", []), "__gt", [7]);
-    if (smalltalk.assert($2)) {
-        string = smalltalk.send(string, "__comma", ["-reversed"]);
-    }
-    $3 = string;
-    return $3;
+fn: function (){
+var self=this;
+var $1,$2,$3;
+var string;
+string="";
+$1=smalltalk.send([(1), (13), (15)],"_includes_",[smalltalk.send(self,"_position",[])]);
+if(smalltalk.assert($1)){
+string="-slashed";
+string;
+};
+$2=smalltalk.send(smalltalk.send(self,"_position",[]),"__gt",[(7)]);
+if(smalltalk.assert($2)){
+string=smalltalk.send(string,"__comma",["-reversed"]);
+string;
+};
+$3=string;
+return $3;
 }
 }),
 smalltalk.Note);
@@ -754,9 +791,9 @@ smalltalk.addMethod(
 "_fKeyNotes",
 smalltalk.method({
 selector: "fKeyNotes",
-fn: function () {
-    var self = this;
-    return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E")];
 }
 }),
 smalltalk.Note.klass);
@@ -765,9 +802,9 @@ smalltalk.addMethod(
 "_fKeyOctaves",
 smalltalk.method({
 selector: "fKeyOctaves",
-fn: function () {
-    var self = this;
-    return [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3];
+fn: function (){
+var self=this;
+return [(1), (1), (1), (1), (1), (2), (2), (2), (2), (2), (2), (2), (3), (3), (3)];
 }
 }),
 smalltalk.Note.klass);
@@ -776,9 +813,9 @@ smalltalk.addMethod(
 "_gKeyNotes",
 smalltalk.method({
 selector: "gKeyNotes",
-fn: function () {
-    var self = this;
-    return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A")];
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C"), smalltalk.symbolFor("D"), smalltalk.symbolFor("E"), smalltalk.symbolFor("F"), smalltalk.symbolFor("G"), smalltalk.symbolFor("A"), smalltalk.symbolFor("B"), smalltalk.symbolFor("C")];
 }
 }),
 smalltalk.Note.klass);
@@ -787,9 +824,9 @@ smalltalk.addMethod(
 "_gKeyOctaves",
 smalltalk.method({
 selector: "gKeyOctaves",
-fn: function () {
-    var self = this;
-    return [3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4];
+fn: function (){
+var self=this;
+return [(3), (3), (3), (3), (3), (3), (3), (4), (4), (4), (4), (4), (4), (4), (5)];
 }
 }),
 smalltalk.Note.klass);
@@ -1040,7 +1077,7 @@ smalltalk.OptionSelectionWidget);
 
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'bpm', 'difficulty', 'noteDiv', 'currentNote', 'game'], 'Rescorer');
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'bpm', 'difficulty', 'noteDiv', 'currentNote', 'game', 'notePositions'], 'Rescorer');
 smalltalk.addMethod(
 "_bpm",
 smalltalk.method({
@@ -1167,23 +1204,51 @@ smalltalk.addMethod(
 "_nextNote",
 smalltalk.method({
 selector: "nextNote",
-fn: function () {
-    var self = this;
-    var $1, $2;
-    var notePositions;
-    notePositions = smalltalk.send(1, "_to_", [13]);
-    $1 = self['@currentNote'];
-    if (($receiver = $1) == nil || $receiver == undefined) {
-    } else {
-        smalltalk.send(notePositions, "_remove_", [smalltalk.send(self['@currentNote'], "_position", [])]);
-    }
-    self['@currentNote'] = smalltalk.send(smalltalk.Note || Note, "_position_key_", [smalltalk.send(notePositions, "_atRandom", []), smalltalk.send(self, "_keyName", [])]);
-    $2 = self['@noteDiv'];
-    if (($receiver = $2) == nil || $receiver == undefined) {
-    } else {
-        smalltalk.send(self['@noteDiv'], "_contents_", [function (html) {return smalltalk.send(self, "_renderNoteOn_", [html]);}]);
-    }
-    return self;
+fn: function (){
+var self=this;
+var $1,$2;
+var positions;
+positions=smalltalk.send(smalltalk.send(self,"_notePositions",[]),"_copy",[]);
+$1=self["@currentNote"];
+if(($receiver = $1) == nil || $receiver == undefined){
+$1;
+} else {
+smalltalk.send(positions,"_remove_",[smalltalk.send(self["@currentNote"],"_position",[])]);
+};
+self["@currentNote"]=smalltalk.send((smalltalk.Note || Note),"_position_key_",[smalltalk.send(positions,"_atRandom",[]),smalltalk.send(self,"_keyName",[])]);
+$2=self["@noteDiv"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$2;
+} else {
+smalltalk.send(self["@noteDiv"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderNoteOn_",[html]);
+})]);
+};
+return self}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_notePositions",
+smalltalk.method({
+selector: "notePositions",
+fn: function (){
+var self=this;
+var $2,$3,$4,$1;
+$2=self["@notePositions"];
+if(($receiver = $2) == nil || $receiver == undefined){
+$3=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+smalltalk.send($3,"_at_put_",[(1),smalltalk.send((1),"_to_",[(8)])]);
+smalltalk.send($3,"_at_put_",[(2),smalltalk.send((1),"_to_",[(13)])]);
+smalltalk.send($3,"_at_put_",[(3),smalltalk.send((1),"_to_",[(13)])]);
+smalltalk.send($3,"_at_put_",[(4),smalltalk.send((1),"_to_",[(15)])]);
+$4=smalltalk.send($3,"_yourself",[]);
+self["@notePositions"]=smalltalk.send($4,"_at_",[smalltalk.send(self,"_difficulty",[])]);
+$1=self["@notePositions"];
+} else {
+$1=$2;
+};
+return $1;
 }
 }),
 smalltalk.SheetWidget);
@@ -1219,12 +1284,29 @@ smalltalk.addMethod(
 "_renderLinesOn_",
 smalltalk.method({
 selector: "renderLinesOn:",
-fn: function (html) {
-    var self = this;
-    var $1, $2;
-    self['@lines'] = smalltalk.send(smalltalk.send(1, "_to_", [7]), "_collect_", [function (index) {$1 = smalltalk.send(html, "_hr", []);smalltalk.send($1, "_class_", [smalltalk.send("line i", "__comma", [smalltalk.send(index, "_asString", [])])]);$2 = smalltalk.send($1, "_style_", [smalltalk.send(smalltalk.send("bottom: ", "__comma", [smalltalk.send(smalltalk.send(index, "__star", [12.5]), "_asString", [])]), "__comma", ["%;"])]);return $2;}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+var $1,$3,$5,$7,$9,$8,$6,$4,$2;
+$1=smalltalk.send((1),"_to_",[(7)]);
+$2=(function(index){
+$3=smalltalk.send(html,"_hr",[]);
+smalltalk.send($3,"_class_",[smalltalk.send("line i","__comma",[smalltalk.send(index,"_asString",[])])]);
+$5=$3;
+$7=smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(index,"__star",[(12.5)]),"_asString",[])]),"__comma",["%;"]);
+$9=smalltalk.send(smalltalk.send(index,"__eq",[(4)]),"_and_",[(function(){
+return smalltalk.send(self["@difficulty"],"__eq",[(2)]);
+})]);
+if(smalltalk.assert($9)){
+$8="background-color: red;";
+} else {
+$8="";
+};
+$6=smalltalk.send($7,"__comma",[$8]);
+$4=smalltalk.send($5,"_style_",[$6]);
+return $4;
+});
+self["@lines"]=smalltalk.send($1,"_collect_",[$2]);
+return self}
 }),
 smalltalk.SheetWidget);
 
@@ -1248,13 +1330,21 @@ smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
-fn: function (html) {
-    var self = this;
-    var $1, $2;
-    self['@sheetDiv'] = smalltalk.send(smalltalk.send(html, "_div", []), "_class_", ["sheet"]);
-    smalltalk.send(self['@sheetDiv'], "_with_", [function () {$1 = self;smalltalk.send($1, "_renderKeyOn_", [html]);$2 = smalltalk.send($1, "_renderLinesOn_", [html]);$2;self['@noteDiv'] = smalltalk.send(smalltalk.send(html, "_div", []), "_with_", [function () {return smalltalk.send(self, "_renderNoteOn_", [html]);}]);return self['@noteDiv'];}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+var $1,$2;
+self["@sheetDiv"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_class_",["sheet"]);
+smalltalk.send(self["@sheetDiv"],"_with_",[(function(){
+$1=self;
+smalltalk.send($1,"_renderLinesOn_",[html]);
+$2=smalltalk.send($1,"_renderKeyOn_",[html]);
+$2;
+self["@noteDiv"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+return smalltalk.send(self,"_renderNoteOn_",[html]);
+})]);
+return self["@noteDiv"];
+})]);
+return self}
 }),
 smalltalk.SheetWidget);
 

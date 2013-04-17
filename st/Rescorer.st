@@ -94,7 +94,7 @@ renderOn: html
             h img 
             	class: 'tip';
                 src: 'images/bubble-tip.svg'.
-			bubbleSpan := h span ]
+			bubbleSpan := h span contents: 'Comencem!!' ]
 ! !
 
 !BubbleWidget methodsFor: 'updating'!
@@ -208,7 +208,7 @@ wrongAnswerAction
 
 renderAudioElementsOn: html
 	#('A' 'B' 'C' 'D' 'E' 'F' 'G') do: [ :eachNote | 
-    	#('1' '2' '3' '4') do: [ :eachOctave | 
+    	#('1' '2' '3' '4' '5') do: [ :eachOctave | 
         	html audio
   				class: 'note ' , eachNote , eachOctave;
   				src: 'sounds/' , eachNote , eachOctave , '.ogg' ]].
@@ -312,8 +312,12 @@ renderSpeedSelectionStageOn: html
 			at: 'Presto'
             	put: [ 
                 	self sheetWidget bpm: 170.
+                    self nextStage ];
+			at: 'Custom'
+            	put: [
+                  	self sheetWidget bpm: ((window prompt: 'BPM?') asNumber > 0 ifFalse: [ 70 ]).
                     self nextStage ].
-	self bubbleWidget text: 'I a quina velocitat?'.
+	self bubbleWidget text: 'I a quin tempo?'.
 	html with: stage.
 ! !
 
@@ -375,15 +379,21 @@ cssStyle
 	^ 'bottom: ' , self bottom asString , '%;'
 !
 
+extraSlashesString
+    ^ self position > 13
+    	ifTrue: [ '-extra' ]
+        ifFalse: [ '' ]
+!
+
 imagePath
-	^ 'images/note' , self slashedOrReversedString , '.svg'
+	^ 'images/note' , self slashedOrReversedString , self extraSlashesString , '.svg'
 !
 
 slashedOrReversedString
 	| string |
     string := ''.
 	
-    (self position = 1 or: [ self position = 13 ])
+    (#(1 13 15) includes: self position)
     	ifTrue: [ string := '-slashed' ].
     
     self position > 7 
@@ -403,19 +413,19 @@ Note class instanceVariableNames: 'noteDictionary octaveDictionary'!
 !Note class methodsFor: 'accessing'!
 
 fKeyNotes
-	^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C)
+	^ #(#E #F #G #A #B #C #D #E #F #G #A #B #C #D #E)
 !
 
 fKeyOctaves
-	^ #(1 1 1 1 1 2 2 2 2 2 2 2 3)
+	^ #(1 1 1 1 1 2 2 2 2 2 2 2 3 3 3)
 !
 
 gKeyNotes
-	^ #(#C #D #E #F #G #A #B #C #D #E #F #G #A)
+	^ #(#C #D #E #F #G #A #B #C #D #E #F #G #A #B #C)
 !
 
 gKeyOctaves
-	^ #(3 3 3 3 3 3 3 4 4 4 4 4 4)
+	^ #(3 3 3 3 3 3 3 4 4 4 4 4 4 4 5)
 !
 
 noteDictionary
@@ -536,7 +546,7 @@ renderOn: html
 ! !
 
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines keyImg sheetDiv keyName bpm difficulty noteDiv currentNote game'
+	instanceVariableNames: 'lines keyImg sheetDiv keyName bpm difficulty noteDiv currentNote game notePositions'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
@@ -583,11 +593,22 @@ play
 !SheetWidget methodsFor: 'actions'!
 
 nextNote
-	| notePositions |
-    notePositions := (1 to: 13).
-    currentNote ifNotNil: [ notePositions remove: currentNote position ].
-	currentNote := Note position: notePositions atRandom key: self keyName.
+	| positions |
+    positions := self notePositions copy.
+    currentNote ifNotNil: [ positions remove: currentNote position ].
+	currentNote := Note position: positions atRandom key: self keyName.
 	noteDiv ifNotNil: [ noteDiv contents: [ :html | self renderNoteOn: html ]]
+!
+
+notePositions
+   ^ notePositions 
+    	ifNil: [ notePositions := 
+    		(Dictionary new 
+            	at: 1 put: (1 to: 8);
+                at: 2 put: (1 to: 13);
+                at: 3 put: (1 to: 13);
+                at: 4 put: (1 to: 15);
+				yourself) at: self difficulty ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -603,7 +624,7 @@ renderLinesOn: html
 	lines := (1 to: 7) collect: [ :index | 
     	html hr 
         	class: 'line i' , index asString;
-        	style: 'bottom: ' , (index * 12.5) asString , '%;' ]
+        	style: 'bottom: ' , (index * 12.5) asString , '%;' , ((index = 4 and: [ difficulty = 2 ]) ifTrue: [ 'background-color: red;' ] ifFalse: [ '' ]) ]
 !
 
 renderNoteOn: html
@@ -618,8 +639,8 @@ renderOn: html
 	sheetDiv
 		with: [
 			self 
-				renderKeyOn: html;
-				renderLinesOn: html.
+				renderLinesOn: html;
+                renderKeyOn: html.
 	noteDiv := html div with: [ self renderNoteOn: html ]]
 ! !
 
