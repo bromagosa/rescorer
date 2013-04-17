@@ -7,12 +7,12 @@
 @white: #edfff6;
 @black: #0d1100;
 
-.bar { background-color: @lightGreen }
-
 body { 
-	color: @black;
 	background-color: @darkGreen;
+	color: @black;
 }
+
+.bar { background-color: @lightGreen }
 
 .title { color: @darkGreen }
 
@@ -51,6 +51,11 @@ body { font-family: 'Permanent Marker', cursive }
 button { 
 	.font-size(2);
 	&:hover { .font-size(2.1) }
+}
+
+.buttons-container > button {
+	.font-size(3);
+	&:hover {.font-size(3.1) }
 }
 
 /*
@@ -93,16 +98,28 @@ html, body { height: 100% }
 	bottom: -35%;
 }
 
+.buttons-container {
+	position: absolute;
+	width: 60%;
+	left: 3%;
+	height: 40%;
+	bottom: 130px; 
+	> button {
+		width: 250px;
+		height: 50px;
+		display: block;	
+	}
+}
+
 .sheet-container {
 	position: absolute;
 	width: 60%;
 	left: 3%;
 	height: 40%;
-	bottom: 130px; //← production
-	//top: 75px; //← development
+	bottom: 130px; 
 }
 
-.button-container {
+.note-buttons-container {
 	position: absolute;
 	width: 60%;
 	left: 3%;
@@ -178,7 +195,11 @@ button {
 	.rounded-corners(15px);
 }
 
-.button-container > button {
+.buttons-container > button {
+	margin-bottom: 2%;
+}
+
+.note-buttons-container > button {
 	margin-top: 1%;	
 	margin-right: 1%;
 	&:last-child {

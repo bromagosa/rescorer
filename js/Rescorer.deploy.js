@@ -1,5 +1,5 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['sheetWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceImg', 'bubbleSpan'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceImg', 'bubbleSpan'], 'Rescorer');
 smalltalk.addMethod(
 "_beHappy",
 smalltalk.method({
@@ -59,6 +59,25 @@ fn: function () {
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_currentStage",
+smalltalk.method({
+selector: "currentStage",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@currentStage"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@currentStage"]=smalltalk.symbolFor("difficultySelection");
+$1=self["@currentStage"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_isNoteCorrect_",
 smalltalk.method({
 selector: "isNoteCorrect:",
@@ -99,6 +118,18 @@ fn: function (aString) {
     self['@mood'] = aString;
     return self;
 }
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_nextStage",
+smalltalk.method({
+selector: "nextStage",
+fn: function (){
+var self=this;
+self["@currentStage"]=smalltalk.send(smalltalk.send(self,"_stageNames",[]),"_at_",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_stageNames",[]),"_indexOf_",[smalltalk.send(self,"_currentStage",[])]),"_\\\\",[smalltalk.send(smalltalk.send(self,"_stageNames",[]),"_size",[])]),"__plus",[(1)])]);
+smalltalk.send(self,"_update",[]);
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -165,21 +196,70 @@ smalltalk.addMethod(
 "_renderContentOn_",
 smalltalk.method({
 selector: "renderContentOn:",
-fn: function (html) {
-    var self = this;
-    var $1, $2, $3, $4;
-    self['@faceImg'] = smalltalk.send(self, "_renderFaceOn_", [html]);
-    smalltalk.send(self, "_renderBubbleOn_", [html]);
-    $1 = smalltalk.send(html, "_div", []);
-    smalltalk.send($1, "_class_", ["sheet-container"]);
-    $2 = smalltalk.send($1, "_with_", [smalltalk.send(self, "_sheetWidget", [])]);
-    $3 = smalltalk.send(html, "_div", []);
-    smalltalk.send($3, "_class_", ["button-container"]);
-    $4 = smalltalk.send($3, "_with_", [smalltalk.send(self, "_noteButtonsWidget", [])]);
-    smalltalk.send(self, "_renderAudioElementsOn_", [html]);
-    self['@errorAudio'] = smalltalk.send(smalltalk.send(html, "_div", []), "_with_", [function () {return smalltalk.send(self, "_renderErrorAudioOn_", [html]);}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+self["@faceImg"]=smalltalk.send(self,"_renderFaceOn_",[html]);
+smalltalk.send(self,"_renderBubbleOn_",[html]);
+smalltalk.send(self,"_renderCurrentStageOn_",[html]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderCurrentStageOn_",
+smalltalk.method({
+selector: "renderCurrentStageOn:",
+fn: function (html){
+var self=this;
+var $1,$2,$3,$4;
+$1=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("difficultySelection")]);
+if(smalltalk.assert($1)){
+smalltalk.send(self,"_renderDifficultySelectionStageOn_",[html]);
+};
+$2=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("speedSelection")]);
+if(smalltalk.assert($2)){
+smalltalk.send(self,"_renderSpeedSelectionStageOn_",[html]);
+};
+$3=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("keySelection")]);
+if(smalltalk.assert($3)){
+smalltalk.send(self,"_renderKeySelectionStageOn_",[html]);
+};
+$4=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("game")]);
+if(smalltalk.assert($4)){
+smalltalk.send(self,"_renderGameStageOn_",[html]);
+};
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderDifficultySelectionStageOn_",
+smalltalk.method({
+selector: "renderDifficultySelectionStageOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+$1=smalltalk.send(stage,"_buttons",[]);
+smalltalk.send($1,"_at_put_",["Principiant",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(1)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["Iniciat",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(2)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["Expert",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(3)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+$2=smalltalk.send($1,"_at_put_",["Virtuós",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(4)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send(html,"_with_",[stage]);
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -215,17 +295,94 @@ fn: function (html) {
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_renderGameStageOn_",
+smalltalk.method({
+selector: "renderGameStageOn:",
+fn: function (html){
+var self=this;
+var $1,$2,$3,$4;
+$1=smalltalk.send(html,"_div",[]);
+smalltalk.send($1,"_class_",["sheet-container"]);
+$2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
+$3=smalltalk.send(html,"_div",[]);
+smalltalk.send($3,"_class_",["note-buttons-container"]);
+$4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+smalltalk.send(self,"_renderAudioElementsOn_",[html]);
+self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderKeySelectionStageOn_",
+smalltalk.method({
+selector: "renderKeySelectionStageOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+$1=smalltalk.send(stage,"_buttons",[]);
+smalltalk.send($1,"_at_put_",["Sol",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_keyName_",[smalltalk.symbolFor("G")]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+$2=smalltalk.send($1,"_at_put_",["Fa",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_keyName_",[smalltalk.symbolFor("F")]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send(html,"_with_",[stage]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
 selector: "renderOn:",
-fn: function (html) {
-    var self = this;
-    var $1, $2;
-    $1 = smalltalk.send(html, "_div", []);
-    smalltalk.send($1, "_class_", ["wrapper"]);
-    $2 = smalltalk.send($1, "_contents_", [function (h) {return smalltalk.send(self, "_renderContentOn_", [h]);}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+var $1,$2;
+$1=smalltalk.send(html,"_div",[]);
+smalltalk.send($1,"_class_",["wrapper"]);
+$2=smalltalk.send($1,"_with_",[(function(){
+return smalltalk.send(self,"_renderContentOn_",[html]);
+})]);
+self["@wrapper"]=$2;
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderSpeedSelectionStageOn_",
+smalltalk.method({
+selector: "renderSpeedSelectionStageOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+$1=smalltalk.send(stage,"_buttons",[]);
+smalltalk.send($1,"_at_put_",["Adagio",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(70)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["Andante",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(100)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["Allegro",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(130)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+$2=smalltalk.send($1,"_at_put_",["Presto",(function(){
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(170)]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send(html,"_with_",[stage]);
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -245,6 +402,30 @@ fn: function () {
     }
     return $1;
 }
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_stageNames",
+smalltalk.method({
+selector: "stageNames",
+fn: function (){
+var self=this;
+return [smalltalk.symbolFor("difficultySelection"), smalltalk.symbolFor("speedSelection"), smalltalk.symbolFor("keySelection"), smalltalk.symbolFor("game")];
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_update",
+smalltalk.method({
+selector: "update",
+fn: function (){
+var self=this;
+smalltalk.send(self["@wrapper"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderContentOn_",[html]);
+})]);
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -681,7 +862,86 @@ smalltalk.NoteButtonsWidget);
 
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'noteDiv', 'currentNote', 'game'], 'Rescorer');
+smalltalk.addClass('OptionSelectionWidget', smalltalk.Widget, ['buttons'], 'Rescorer');
+smalltalk.addMethod(
+"_buttons",
+smalltalk.method({
+selector: "buttons",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@buttons"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@buttons"]=smalltalk.send((smalltalk.Dictionary || Dictionary),"_new",[]);
+$1=self["@buttons"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.OptionSelectionWidget);
+
+smalltalk.addMethod(
+"_renderButtonsOn_",
+smalltalk.method({
+selector: "renderButtonsOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+smalltalk.send(smalltalk.send(self,"_buttons",[]),"_associationsDo_",[(function(eachButton){
+$1=smalltalk.send(html,"_button",[]);
+smalltalk.send($1,"_with_",[smalltalk.send(eachButton,"_key",[])]);
+$2=smalltalk.send($1,"_onClick_",[smalltalk.send(eachButton,"_value",[])]);
+return $2;
+})]);
+return self}
+}),
+smalltalk.OptionSelectionWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+fn: function (html){
+var self=this;
+var $1,$2;
+$1=smalltalk.send(html,"_div",[]);
+smalltalk.send($1,"_class_",["buttons-container"]);
+$2=smalltalk.send($1,"_with_",[(function(){
+return smalltalk.send(self,"_renderButtonsOn_",[html]);
+})]);
+return self}
+}),
+smalltalk.OptionSelectionWidget);
+
+
+
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'bpm', 'difficulty', 'noteDiv', 'currentNote', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_bpm",
+smalltalk.method({
+selector: "bpm",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@bpm"];
+return $1;
+}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_bpm_",
+smalltalk.method({
+selector: "bpm:",
+fn: function (anInteger){
+var self=this;
+self["@bpm"]=anInteger;
+return self}
+}),
+smalltalk.SheetWidget);
+
 smalltalk.addMethod(
 "_currentNote",
 smalltalk.method({
@@ -698,6 +958,30 @@ fn: function () {
     }
     return $1;
 }
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_difficulty",
+smalltalk.method({
+selector: "difficulty",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@difficulty"];
+return $1;
+}
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_difficulty_",
+smalltalk.method({
+selector: "difficulty:",
+fn: function (anInteger){
+var self=this;
+self["@difficulty"]=anInteger;
+return self}
 }),
 smalltalk.SheetWidget);
 
@@ -742,6 +1026,17 @@ fn: function () {
     }
     return $1;
 }
+}),
+smalltalk.SheetWidget);
+
+smalltalk.addMethod(
+"_keyName_",
+smalltalk.method({
+selector: "keyName:",
+fn: function (aSymbol){
+var self=this;
+self["@keyName"]=aSymbol;
+return self}
 }),
 smalltalk.SheetWidget);
 

@@ -1,12 +1,12 @@
 /*
 	COLORS
 */
+body {
+  background-color: #aad400;
+  color: #0d1100;
+}
 .bar {
   background-color: #d4ff2a;
-}
-body {
-  color: #0d1100;
-  background-color: #aad400;
 }
 .title {
   color: #aad400;
@@ -49,6 +49,14 @@ button:hover {
   font-size: 21px;
   font-size: 2.1rem;
 }
+.buttons-container > button {
+  font-size: 30px;
+  font-size: 3rem;
+}
+.buttons-container > button:hover {
+  font-size: 31px;
+  font-size: 3.1rem;
+}
 /*
 	POSITIONS AND SIZES
 */
@@ -89,6 +97,18 @@ body {
   right: 0;
   bottom: -35%;
 }
+.buttons-container {
+  position: absolute;
+  width: 60%;
+  left: 3%;
+  height: 40%;
+  bottom: 130px;
+}
+.buttons-container > button {
+  width: 250px;
+  height: 50px;
+  display: block;
+}
 .sheet-container {
   position: absolute;
   width: 60%;
@@ -96,14 +116,14 @@ body {
   height: 40%;
   bottom: 130px;
 }
-.button-container {
+.note-buttons-container {
   position: absolute;
   width: 60%;
   left: 3%;
   height: 40px;
   bottom: 70px;
 }
-.button-container > button {
+.note-buttons-container > button {
   height: 100%;
   width: 13.428571428571429%;
 }
@@ -161,11 +181,14 @@ button {
   -o-border-radius: 15px;
   border-radius: 15px;
 }
-.button-container > button {
+.buttons-container > button {
+  margin-bottom: 2%;
+}
+.note-buttons-container > button {
   margin-top: 1%;
   margin-right: 1%;
 }
-.button-container > button:last-child {
+.note-buttons-container > button:last-child {
   margin-right: 0;
 }
 .line {

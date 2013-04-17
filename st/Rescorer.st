@@ -1,9 +1,13 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #GameWidget
-	instanceVariableNames: 'sheetWidget noteButtonsWidget errorAudio mood faceImg bubbleSpan'
+	instanceVariableNames: 'wrapper currentStage sheetWidget noteButtonsWidget errorAudio mood faceImg bubbleSpan'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
+
+currentStage
+	^ currentStage ifNil: [ currentStage := #difficultySelection ]
+!
 
 mood
 	^ mood ifNil: [ mood := 'happy' ]
@@ -19,6 +23,10 @@ noteButtonsWidget
 
 sheetWidget
 	^ sheetWidget ifNil: [ sheetWidget := SheetWidget new game: self ]
+!
+
+stageNames
+	^ #(#difficultySelection #speedSelection #keySelection #game).
 ! !
 
 !GameWidget methodsFor: 'actions'!
@@ -43,6 +51,11 @@ correctAnswerAction
 	self sheetWidget currentNote play.
     self beHappy.
 	self sheetWidget nextNote
+!
+
+nextStage
+	currentStage := self stageNames at: ((self stageNames indexOf: self currentStage) \\ self stageNames size) + 1.
+    self update.
 !
 
 playErrorSound
@@ -78,14 +91,7 @@ renderBubbleOn: html
 renderContentOn: html
 	faceImg := self renderFaceOn: html.
 	self renderBubbleOn: html.
-	html div 
-    	class: 'sheet-container';
-    	with: self sheetWidget.
-	html div 
-    	class: 'button-container';
-    	with: self noteButtonsWidget.
-    self renderAudioElementsOn: html.
-	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+	self renderCurrentStageOn: html.
 !
 
 renderErrorAudioOn: html
@@ -101,19 +107,106 @@ renderFaceOn: html
 !
 
 renderOn: html
-	html div 
+	wrapper := html div 
     	class: 'wrapper';
-        contents: [:h | self renderContentOn: h ].
+        with: [ self renderContentOn: html ]
+! !
+
+!GameWidget methodsFor: 'rendering - stages'!
+
+renderCurrentStageOn: html
+	self currentStage = #difficultySelection ifTrue: [ self renderDifficultySelectionStageOn: html ].
+	self currentStage = #speedSelection ifTrue: [ self renderSpeedSelectionStageOn: html ].
+	self currentStage = #keySelection ifTrue: [ self renderKeySelectionStageOn: html ].
+	self currentStage = #game ifTrue: [ self renderGameStageOn: html ].
 !
 
-updateFace
-	faceImg src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'
+renderDifficultySelectionStageOn: html
+	| stage |
+	stage := OptionSelectionWidget new.
+	stage buttons
+        	at: 'Principiant'
+            	put: [
+                	self sheetWidget difficulty: 1.
+            		self nextStage ];
+			at: 'Iniciat'
+            	put: [
+                	self sheetWidget difficulty: 2.
+                    self nextStage ];
+			at: 'Expert'
+            	put: [
+                	self sheetWidget difficulty: 3.
+                    self nextStage ];
+			at: 'Virtuós'
+            	put: [
+                	self sheetWidget difficulty: 4.
+                    self nextStage ].
+	html with: stage.
+!
+
+renderGameStageOn: html
+	html div 
+    	class: 'sheet-container';
+    	with: self sheetWidget.
+	html div 
+    	class: 'note-buttons-container';
+    	with: self noteButtonsWidget.
+    self renderAudioElementsOn: html.
+	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+!
+
+renderKeySelectionStageOn: html
+	| stage |
+	stage := OptionSelectionWidget new.
+	stage buttons 
+        	at: 'Sol' 
+            	put: [
+                	self sheetWidget keyName: #G. 
+            		self nextStage ]; 
+			at: 'Fa' 
+            	put: [ 
+                	self sheetWidget keyName: #F. 
+                    self nextStage ].
+	html with: stage.
+!
+
+renderSpeedSelectionStageOn: html
+	| stage |
+	stage := OptionSelectionWidget new.
+	stage buttons 
+        	at: 'Adagio'
+            	put: [
+                	self sheetWidget bpm: 70. 
+            		self nextStage ];
+			at: 'Andante'
+            	put: [ 
+                	self sheetWidget bpm: 100.
+                    self nextStage ];
+			at: 'Allegro'
+            	put: [ 
+                	self sheetWidget bpm: 130.
+                    self nextStage ];
+			at: 'Presto'
+            	put: [ 
+                	self sheetWidget bpm: 170.
+                    self nextStage ].
+	html with: stage.
 ! !
 
 !GameWidget methodsFor: 'testing'!
 
 isNoteCorrect: aNoteSymbol
 	^ self sheetWidget currentNote symbol = aNoteSymbol
+! !
+
+!GameWidget methodsFor: 'updating'!
+
+update
+	wrapper contents: [ :html | self renderContentOn: html ]
+!
+
+updateFace
+	faceImg src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'
 ! !
 
 Object subclass: #Note
@@ -296,14 +389,56 @@ renderOn: html
                 onClick: [ self game checkNote: each value ]].
 ! !
 
+Widget subclass: #OptionSelectionWidget
+	instanceVariableNames: 'buttons'
+	package: 'Rescorer'!
+
+!OptionSelectionWidget methodsFor: 'accessing'!
+
+buttons
+	^ buttons ifNil: [ buttons := Dictionary new ]
+! !
+
+!OptionSelectionWidget methodsFor: 'rendering'!
+
+renderButtonsOn: html
+	self buttons 
+    	associationsDo: [ :eachButton | 
+			html button
+            	with: eachButton key;
+                onClick: eachButton value ]
+!
+
+renderOn: html
+	html div
+    	class: 'buttons-container';
+        with: [ self renderButtonsOn: html ]
+! !
+
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines keyImg sheetDiv keyName noteDiv currentNote game'
+	instanceVariableNames: 'lines keyImg sheetDiv keyName bpm difficulty noteDiv currentNote game'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
 
+bpm
+	^ bpm
+!
+
+bpm: anInteger
+	bpm := anInteger
+!
+
 currentNote
 	^ currentNote ifNil: [ self nextNote. currentNote ]
+!
+
+difficulty
+	^ difficulty
+!
+
+difficulty: anInteger
+	difficulty := anInteger
 !
 
 game
@@ -316,6 +451,10 @@ game: aGameWidget
 
 keyName
 	^ keyName ifNil: [ keyName := #G ]
+!
+
+keyName: aSymbol
+	keyName := aSymbol
 !
 
 play
