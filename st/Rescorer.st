@@ -1,20 +1,82 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
+Widget subclass: #BubbleWidget
+	instanceVariableNames: 'bubbleSpan'
+	package: 'Rescorer'!
+
+!BubbleWidget methodsFor: 'rendering'!
+
+renderOn: html
+	html div
+    	class: 'bubble';
+    	contents: [ :h | 
+            h img 
+            	class: 'tip';
+                src: 'images/bubble-tip.svg'.
+			bubbleSpan := h span ]
+! !
+
+!BubbleWidget methodsFor: 'updating'!
+
+text: aString
+	bubbleSpan contents: aString
+! !
+
+Widget subclass: #FaceWidget
+	instanceVariableNames: 'mood faceImg'
+	package: 'Rescorer'!
+
+!FaceWidget methodsFor: 'accessing'!
+
+mood
+	^ mood ifNil: [ mood := #happy ]
+!
+
+mood: aString
+	mood := aString
+! !
+
+!FaceWidget methodsFor: 'actions'!
+
+beHappy
+	self mood: #happy.
+    self updateFace.
+!
+
+beSad
+	self mood: #sad.
+    self updateFace.
+! !
+
+!FaceWidget methodsFor: 'rendering'!
+
+renderOn: html
+	faceImg := html img
+    	class: 'image face';
+        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'.
+! !
+
+!FaceWidget methodsFor: 'updating'!
+
+updateFace
+	faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'
+! !
+
 Widget subclass: #GameWidget
-	instanceVariableNames: 'wrapper currentStage sheetWidget noteButtonsWidget errorAudio mood faceImg bubbleSpan'
+	instanceVariableNames: 'wrapper currentStage sheetWidget bubbleWidget noteButtonsWidget errorAudio mood faceWidget'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
+
+bubbleWidget
+	^ bubbleWidget ifNil: [ bubbleWidget := BubbleWidget new ]
+!
 
 currentStage
 	^ currentStage ifNil: [ currentStage := #difficultySelection ]
 !
 
-mood
-	^ mood ifNil: [ mood := 'happy' ]
-!
-
-mood: aString
-	mood := aString
+faceWidget
+	^ faceWidget ifNil: [ faceWidget := FaceWidget new ]
 !
 
 noteButtonsWidget
@@ -31,16 +93,6 @@ stageNames
 
 !GameWidget methodsFor: 'actions'!
 
-beHappy
-	self mood: 'happy'.
-    self updateFace.
-!
-
-beSad
-	self mood: 'sad'.
-    self updateFace.
-!
-
 checkNote: aNoteSymbol
 	(self isNoteCorrect: aNoteSymbol) 
     	ifTrue: [ self correctAnswerAction ]
@@ -49,7 +101,7 @@ checkNote: aNoteSymbol
 
 correctAnswerAction
 	self sheetWidget currentNote play.
-    self beHappy.
+    self faceWidget beHappy.
 	self sheetWidget nextNote
 !
 
@@ -64,7 +116,7 @@ playErrorSound
 
 wrongAnswerAction
 	self playErrorSound.
-    self beSad.
+    self faceWidget beSad.
     errorAudio contents: [ :html | self renderErrorAudioOn: html ]
 ! !
 
@@ -79,17 +131,11 @@ renderAudioElementsOn: html
 !
 
 renderBubbleOn: html
-	html div 
-    	class: 'bubble';
-    	contents: [ :h | 
-            h img 
-            	class: 'tip';
-                src: 'images/bubble-tip.svg'.
-			bubbleSpan := h span ]
+	html with: self bubbleWidget
 !
 
 renderContentOn: html
-	faceImg := self renderFaceOn: html.
+	self renderFaceOn: html.
 	self renderBubbleOn: html.
 	self renderCurrentStageOn: html.
 !
@@ -101,9 +147,7 @@ renderErrorAudioOn: html
 !
 
 renderFaceOn: html
-	^ html img
-    	class: 'image face';
-        src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'.
+	html with: self faceWidget
 !
 
 renderOn: html
@@ -141,6 +185,7 @@ renderDifficultySelectionStageOn: html
             	put: [
                 	self sheetWidget difficulty: 4.
                     self nextStage ].
+	self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.
 	html with: stage.
 !
 
@@ -167,6 +212,7 @@ renderKeySelectionStageOn: html
             	put: [ 
                 	self sheetWidget keyName: #F. 
                     self nextStage ].
+	self bubbleWidget text: 'Escull la clau, si us plau.'.
 	html with: stage.
 !
 
@@ -190,6 +236,7 @@ renderSpeedSelectionStageOn: html
             	put: [ 
                 	self sheetWidget bpm: 170.
                     self nextStage ].
+	self bubbleWidget text: 'I a quina velocitat?'.
 	html with: stage.
 ! !
 
@@ -203,10 +250,6 @@ isNoteCorrect: aNoteSymbol
 
 update
 	wrapper contents: [ :html | self renderContentOn: html ]
-!
-
-updateFace
-	faceImg src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'
 ! !
 
 Object subclass: #Note

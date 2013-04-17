@@ -1,38 +1,184 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceImg', 'bubbleSpan'], 'Rescorer');
+smalltalk.addClass('BubbleWidget', smalltalk.Widget, ['bubbleSpan'], 'Rescorer');
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+var $1,$3,$4,$2;
+$1=smalltalk.send(html,"_div",[]);
+smalltalk.send($1,"_class_",["bubble"]);
+$2=smalltalk.send($1,"_contents_",[(function(h){
+$3=smalltalk.send(h,"_img",[]);
+smalltalk.send($3,"_class_",["tip"]);
+$4=smalltalk.send($3,"_src_",["images/bubble-tip.svg"]);
+$4;
+self["@bubbleSpan"]=smalltalk.send(h,"_span",[]);
+return self["@bubbleSpan"];
+})]);
+return self},
+args: ["html"],
+source: "renderOn: html\x0a\x09html div\x0a    \x09class: 'bubble';\x0a    \x09contents: [ :h | \x0a            h img \x0a            \x09class: 'tip';\x0a                src: 'images/bubble-tip.svg'.\x0a\x09\x09\x09bubbleSpan := h span ]",
+messageSends: ["class:", "div", "contents:", "img", "src:", "span"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
+smalltalk.addMethod(
+"_text_",
+smalltalk.method({
+selector: "text:",
+category: 'updating',
+fn: function (aString){
+var self=this;
+smalltalk.send(self["@bubbleSpan"],"_contents_",[aString]);
+return self},
+args: ["aString"],
+source: "text: aString\x0a\x09bubbleSpan contents: aString",
+messageSends: ["contents:"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
+
+
+smalltalk.addClass('FaceWidget', smalltalk.Widget, ['mood', 'faceImg'], 'Rescorer');
 smalltalk.addMethod(
 "_beHappy",
 smalltalk.method({
 selector: "beHappy",
 category: 'actions',
-fn: function () {
-    var self = this;
-    smalltalk.send(self, "_mood_", ["happy"]);
-    smalltalk.send(self, "_updateFace", []);
-    return self;
-},
+fn: function (){
+var self=this;
+smalltalk.send(self,"_mood_",[smalltalk.symbolFor("happy")]);
+smalltalk.send(self,"_updateFace",[]);
+return self},
 args: [],
-source: "beHappy\x0a\x09self mood: 'happy'.\x0a    self updateFace.",
+source: "beHappy\x0a\x09self mood: #happy.\x0a    self updateFace.",
 messageSends: ["mood:", "updateFace"],
 referencedClasses: []
 }),
-smalltalk.GameWidget);
+smalltalk.FaceWidget);
 
 smalltalk.addMethod(
 "_beSad",
 smalltalk.method({
 selector: "beSad",
 category: 'actions',
-fn: function () {
-    var self = this;
-    smalltalk.send(self, "_mood_", ["sad"]);
-    smalltalk.send(self, "_updateFace", []);
-    return self;
-},
+fn: function (){
+var self=this;
+smalltalk.send(self,"_mood_",[smalltalk.symbolFor("sad")]);
+smalltalk.send(self,"_updateFace",[]);
+return self},
 args: [],
-source: "beSad\x0a\x09self mood: 'sad'.\x0a    self updateFace.",
+source: "beSad\x0a\x09self mood: #sad.\x0a    self updateFace.",
 messageSends: ["mood:", "updateFace"],
 referencedClasses: []
+}),
+smalltalk.FaceWidget);
+
+smalltalk.addMethod(
+"_mood",
+smalltalk.method({
+selector: "mood",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@mood"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@mood"]=smalltalk.symbolFor("happy");
+$1=self["@mood"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "mood\x0a\x09^ mood ifNil: [ mood := #happy ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.FaceWidget);
+
+smalltalk.addMethod(
+"_mood_",
+smalltalk.method({
+selector: "mood:",
+category: 'accessing',
+fn: function (aString){
+var self=this;
+self["@mood"]=aString;
+return self},
+args: ["aString"],
+source: "mood: aString\x0a\x09mood := aString",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.FaceWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+var $1,$2;
+$1=smalltalk.send(html,"_img",[]);
+smalltalk.send($1,"_class_",["image face"]);
+$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+self["@faceImg"]=$2;
+return self},
+args: ["html"],
+source: "renderOn: html\x0a\x09faceImg := html img\x0a    \x09class: 'image face';\x0a        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'.",
+messageSends: ["class:", "img", "src:", ",", "asString", "atRandom", "mood"],
+referencedClasses: []
+}),
+smalltalk.FaceWidget);
+
+smalltalk.addMethod(
+"_updateFace",
+smalltalk.method({
+selector: "updateFace",
+category: 'updating',
+fn: function (){
+var self=this;
+smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+return self},
+args: [],
+source: "updateFace\x0a\x09faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'",
+messageSends: ["src:", ",", "asString", "atRandom", "mood"],
+referencedClasses: []
+}),
+smalltalk.FaceWidget);
+
+
+
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceWidget'], 'Rescorer');
+smalltalk.addMethod(
+"_bubbleWidget",
+smalltalk.method({
+selector: "bubbleWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@bubbleWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@bubbleWidget"]=smalltalk.send((smalltalk.BubbleWidget || BubbleWidget),"_new",[]);
+$1=self["@bubbleWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "bubbleWidget\x0a\x09^ bubbleWidget ifNil: [ bubbleWidget := BubbleWidget new ]",
+messageSends: ["ifNil:", "new"],
+referencedClasses: ["BubbleWidget"]
 }),
 smalltalk.GameWidget);
 
@@ -64,16 +210,15 @@ smalltalk.addMethod(
 smalltalk.method({
 selector: "correctAnswerAction",
 category: 'actions',
-fn: function () {
-    var self = this;
-    smalltalk.send(smalltalk.send(smalltalk.send(self, "_sheetWidget", []), "_currentNote", []), "_play", []);
-    smalltalk.send(self, "_beHappy", []);
-    smalltalk.send(smalltalk.send(self, "_sheetWidget", []), "_nextNote", []);
-    return self;
-},
+fn: function (){
+var self=this;
+smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_play",[]);
+smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
+smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
+return self},
 args: [],
-source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self beHappy.\x0a\x09self sheetWidget nextNote",
-messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "nextNote"],
+source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self faceWidget beHappy.\x0a\x09self sheetWidget nextNote",
+messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "faceWidget", "nextNote"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -103,6 +248,30 @@ referencedClasses: []
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_faceWidget",
+smalltalk.method({
+selector: "faceWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@faceWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@faceWidget"]=smalltalk.send((smalltalk.FaceWidget || FaceWidget),"_new",[]);
+$1=self["@faceWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "faceWidget\x0a\x09^ faceWidget ifNil: [ faceWidget := FaceWidget new ]",
+messageSends: ["ifNil:", "new"],
+referencedClasses: ["FaceWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_isNoteCorrect_",
 smalltalk.method({
 selector: "isNoteCorrect:",
@@ -116,47 +285,6 @@ fn: function (aNoteSymbol) {
 args: ["aNoteSymbol"],
 source: "isNoteCorrect: aNoteSymbol\x0a\x09^ self sheetWidget currentNote symbol = aNoteSymbol",
 messageSends: ["=", "symbol", "currentNote", "sheetWidget"],
-referencedClasses: []
-}),
-smalltalk.GameWidget);
-
-smalltalk.addMethod(
-"_mood",
-smalltalk.method({
-selector: "mood",
-category: 'accessing',
-fn: function () {
-    var self = this;
-    var $2, $1;
-    $2 = self['@mood'];
-    if (($receiver = $2) == nil || $receiver == undefined) {
-        self['@mood'] = "happy";
-        $1 = self['@mood'];
-    } else {
-        $1 = $2;
-    }
-    return $1;
-},
-args: [],
-source: "mood\x0a\x09^ mood ifNil: [ mood := 'happy' ]",
-messageSends: ["ifNil:"],
-referencedClasses: []
-}),
-smalltalk.GameWidget);
-
-smalltalk.addMethod(
-"_mood_",
-smalltalk.method({
-selector: "mood:",
-category: 'accessing',
-fn: function (aString) {
-    var self = this;
-    self['@mood'] = aString;
-    return self;
-},
-args: ["aString"],
-source: "mood: aString\x0a\x09mood := aString",
-messageSends: [],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -242,17 +370,13 @@ smalltalk.addMethod(
 smalltalk.method({
 selector: "renderBubbleOn:",
 category: 'rendering',
-fn: function (html) {
-    var self = this;
-    var $1, $3, $4, $2;
-    $1 = smalltalk.send(html, "_div", []);
-    smalltalk.send($1, "_class_", ["bubble"]);
-    $2 = smalltalk.send($1, "_contents_", [function (h) {$3 = smalltalk.send(h, "_img", []);smalltalk.send($3, "_class_", ["tip"]);$4 = smalltalk.send($3, "_src_", ["images/bubble-tip.svg"]);$4;self['@bubbleSpan'] = smalltalk.send(h, "_span", []);return self['@bubbleSpan'];}]);
-    return self;
-},
+fn: function (html){
+var self=this;
+smalltalk.send(html,"_with_",[smalltalk.send(self,"_bubbleWidget",[])]);
+return self},
 args: ["html"],
-source: "renderBubbleOn: html\x0a\x09html div \x0a    \x09class: 'bubble';\x0a    \x09contents: [ :h | \x0a            h img \x0a            \x09class: 'tip';\x0a                src: 'images/bubble-tip.svg'.\x0a\x09\x09\x09bubbleSpan := h span ]",
-messageSends: ["class:", "div", "contents:", "img", "src:", "span"],
+source: "renderBubbleOn: html\x0a\x09html with: self bubbleWidget",
+messageSends: ["with:", "bubbleWidget"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -264,12 +388,12 @@ selector: "renderContentOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-self["@faceImg"]=smalltalk.send(self,"_renderFaceOn_",[html]);
+smalltalk.send(self,"_renderFaceOn_",[html]);
 smalltalk.send(self,"_renderBubbleOn_",[html]);
 smalltalk.send(self,"_renderCurrentStageOn_",[html]);
 return self},
 args: ["html"],
-source: "renderContentOn: html\x0a\x09faceImg := self renderFaceOn: html.\x0a\x09self renderBubbleOn: html.\x0a\x09self renderCurrentStageOn: html.",
+source: "renderContentOn: html\x0a\x09self renderFaceOn: html.\x0a\x09self renderBubbleOn: html.\x0a\x09self renderCurrentStageOn: html.",
 messageSends: ["renderFaceOn:", "renderBubbleOn:", "renderCurrentStageOn:"],
 referencedClasses: []
 }),
@@ -334,11 +458,12 @@ $2=smalltalk.send($1,"_at_put_",["Virtuós",(function(){
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(4)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["A quin nivell de dificultat vols jugar?"]);
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 4.\x0a                    self nextStage ].\x0a\x09html with: stage.",
-messageSends: ["new", "at:put:", "difficulty:", "sheetWidget", "nextStage", "buttons", "with:"],
+source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 4.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "difficulty:", "sheetWidget", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);
@@ -368,18 +493,13 @@ smalltalk.addMethod(
 smalltalk.method({
 selector: "renderFaceOn:",
 category: 'rendering',
-fn: function (html) {
-    var self = this;
-    var $2, $3, $1;
-    $2 = smalltalk.send(html, "_img", []);
-    smalltalk.send($2, "_class_", ["image face"]);
-    $3 = smalltalk.send($2, "_src_", [smalltalk.send(smalltalk.send(smalltalk.send("images/face-", "__comma", [smalltalk.send(self, "_mood", [])]), "__comma", [smalltalk.send(smalltalk.send([1, 2, 3, 4], "_atRandom", []), "_asString", [])]), "__comma", [".svg"])]);
-    $1 = $3;
-    return $1;
-},
+fn: function (html){
+var self=this;
+smalltalk.send(html,"_with_",[smalltalk.send(self,"_faceWidget",[])]);
+return self},
 args: ["html"],
-source: "renderFaceOn: html\x0a\x09^ html img\x0a    \x09class: 'image face';\x0a        src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'.",
-messageSends: ["class:", "img", "src:", ",", "asString", "atRandom", "mood"],
+source: "renderFaceOn: html\x0a\x09html with: self faceWidget",
+messageSends: ["with:", "faceWidget"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -429,11 +549,12 @@ $2=smalltalk.send($1,"_at_put_",["Fa",(function(){
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_keyName_",[smalltalk.symbolFor("F")]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["Escull la clau, si us plau."]);
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderKeySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Sol' \x0a            \x09put: [\x0a                \x09self sheetWidget keyName: #G. \x0a            \x09\x09self nextStage ]; \x0a\x09\x09\x09at: 'Fa' \x0a            \x09put: [ \x0a                \x09self sheetWidget keyName: #F. \x0a                    self nextStage ].\x0a\x09html with: stage.",
-messageSends: ["new", "at:put:", "keyName:", "sheetWidget", "nextStage", "buttons", "with:"],
+source: "renderKeySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Sol' \x0a            \x09put: [\x0a                \x09self sheetWidget keyName: #G. \x0a            \x09\x09self nextStage ]; \x0a\x09\x09\x09at: 'Fa' \x0a            \x09put: [ \x0a                \x09self sheetWidget keyName: #F. \x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'Escull la clau, si us plau.'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "keyName:", "sheetWidget", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);
@@ -487,11 +608,12 @@ $2=smalltalk.send($1,"_at_put_",["Presto",(function(){
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(170)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["I a quina velocitat?"]);
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderSpeedSelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Adagio'\x0a            \x09put: [\x0a                \x09self sheetWidget bpm: 70. \x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Andante'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 100.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Allegro'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 130.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Presto'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 170.\x0a                    self nextStage ].\x0a\x09html with: stage.",
-messageSends: ["new", "at:put:", "bpm:", "sheetWidget", "nextStage", "buttons", "with:"],
+source: "renderSpeedSelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Adagio'\x0a            \x09put: [\x0a                \x09self sheetWidget bpm: 70. \x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Andante'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 100.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Allegro'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 130.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Presto'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 170.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'I a quina velocitat?'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "bpm:", "sheetWidget", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);
@@ -555,37 +677,21 @@ referencedClasses: []
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
-"_updateFace",
-smalltalk.method({
-selector: "updateFace",
-category: 'updating',
-fn: function () {
-    var self = this;
-    smalltalk.send(self['@faceImg'], "_src_", [smalltalk.send(smalltalk.send(smalltalk.send("images/face-", "__comma", [smalltalk.send(self, "_mood", [])]), "__comma", [smalltalk.send(smalltalk.send([1, 2, 3, 4], "_atRandom", []), "_asString", [])]), "__comma", [".svg"])]);
-    return self;
-},
-args: [],
-source: "updateFace\x0a\x09faceImg src: 'images/face-' , self mood , #(1 2 3 4) atRandom asString , '.svg'",
-messageSends: ["src:", ",", "asString", "atRandom", "mood"],
-referencedClasses: []
-}),
-smalltalk.GameWidget);
-
-smalltalk.addMethod(
 "_wrongAnswerAction",
 smalltalk.method({
 selector: "wrongAnswerAction",
 category: 'actions',
-fn: function () {
-    var self = this;
-    smalltalk.send(self, "_playErrorSound", []);
-    smalltalk.send(self, "_beSad", []);
-    smalltalk.send(self['@errorAudio'], "_contents_", [function (html) {return smalltalk.send(self, "_renderErrorAudioOn_", [html]);}]);
-    return self;
-},
+fn: function (){
+var self=this;
+smalltalk.send(self,"_playErrorSound",[]);
+smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beSad",[]);
+smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
+return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
+})]);
+return self},
 args: [],
-source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
-messageSends: ["playErrorSound", "beSad", "contents:", "renderErrorAudioOn:"],
+source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self faceWidget beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
+messageSends: ["playErrorSound", "beSad", "faceWidget", "contents:", "renderErrorAudioOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
