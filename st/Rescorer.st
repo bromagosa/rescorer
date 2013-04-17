@@ -1,7 +1,89 @@
 Smalltalk current createPackage: 'Rescorer' properties: #{}!
 Widget subclass: #BubbleWidget
-	instanceVariableNames: 'bubbleSpan'
+	instanceVariableNames: 'bubbleSpan happyTexts sadTexts'
 	package: 'Rescorer'!
+
+!BubbleWidget methodsFor: 'accessing'!
+
+happyTexts
+	^ happyTexts ifNil: [ happyTexts := #(
+    'Molt bé!! Et veig en forma!!'
+    'Has estat practicant d''amagat? Ho fas molt bé!!'
+    'Estic orgullós de tu!!'
+    'Tenim a Beethoven entre nosaltres!!'
+    'Disc de platí per a tu!!'
+    'Ho portes molt bé!!'
+    'Segueix així!!'
+    'Endavant!!'
+    'Ho fas millor que jo!!'
+    'En saps molt!!'
+    'No perdis el ritme, que ho estàs fent genial!!'
+    'Fantàstic!!'
+    'Meravellós!!'
+    'Brillant!!'
+    'Excel·lent!!'
+    'Perfecte!!'
+    'Genial!!'
+    'Bé!!'
+    'Molt bé!!'
+    'Quina melodia!!'
+    'Ets el Vivaldi del segle XXI!!'
+    'Quin domini!!'
+    'Quin nivell!!'
+    'Així m''agrada!!'
+    'Boníssim!!'
+    'Es nota que sóc un gran mestre!!'
+    'Aquesta no la sabia ni jo!!'
+    'Ets una màquina!!'
+    'En saps molt més que jo!!'
+    'Quan és el teu proper concert?') ]
+!
+
+sadTexts
+	^ sadTexts ifNil: [ sadTexts := #(
+    'T''hi hauràs d''esforçar una mica més si vols arribar a ser tan gran com jo!!'
+    'Noooo!!'
+    'Aix... malament...'
+    'No era aquesta, no...'
+    'Torna-ho a provar, vinga!!'
+    'Intenta-ho una altra vegada!!'
+    'No passa res, tothom s''equivoca!!'
+    'Errare humanum est.'
+    'Fins i tot jo m''equivoco, de vegades!!'
+    'Encara et falta una mica per saber-ne tant com jo!!'
+    'Hauràs de practicar una miqueta més...'
+    'No et preocupis, un error el té tothom!!'
+    'Va, que sé que ho pots fer molt millor!!'
+    'Aquesta nota no era...'
+    'Vinga, una altra oportunitat!!'
+    'Segur?'
+    'Doncs no era aquesta!!'
+    'Error!!'
+    'Em penso que t''has equivocat!!'
+    'Esforça-t''hi més...'
+    'Aquesta la sabies!! Torna-ho a provar!!'
+    'Fixa-t''hi més!!'
+    'No és correcte, però no et desesperis. Torna-ho a intentar!!'
+    'Mira-t''ho una mica millor...'
+    'Has fallat!!'
+    'Que no escoltes a classe?'
+    'No és correcte...'
+    'Va, una altra oportunitat...'
+    'Ho pots fer molt millor...'
+    'Hauràs de repassar una mica!!'
+    'Això no ha sonat bé...'
+    ) ]
+! !
+
+!BubbleWidget methodsFor: 'actions'!
+
+beHappy
+	self text: self happyTexts atRandom.
+!
+
+beSad
+	self text: self sadTexts atRandom.
+! !
 
 !BubbleWidget methodsFor: 'rendering'!
 
@@ -62,7 +144,7 @@ updateFace
 ! !
 
 Widget subclass: #GameWidget
-	instanceVariableNames: 'wrapper currentStage sheetWidget bubbleWidget noteButtonsWidget errorAudio mood faceWidget'
+	instanceVariableNames: 'wrapper currentStage sheetWidget bubbleWidget noteButtonsWidget errorAudio faceWidget'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
@@ -102,6 +184,7 @@ checkNote: aNoteSymbol
 correctAnswerAction
 	self sheetWidget currentNote play.
     self faceWidget beHappy.
+    self bubbleWidget beHappy.
 	self sheetWidget nextNote
 !
 
@@ -117,6 +200,7 @@ playErrorSound
 wrongAnswerAction
 	self playErrorSound.
     self faceWidget beSad.
+    self bubbleWidget beSad.
     errorAudio contents: [ :html | self renderErrorAudioOn: html ]
 ! !
 
@@ -130,13 +214,10 @@ renderAudioElementsOn: html
   				src: 'sounds/' , eachNote , eachOctave , '.ogg' ]].
 !
 
-renderBubbleOn: html
-	html with: self bubbleWidget
-!
-
 renderContentOn: html
-	self renderFaceOn: html.
-	self renderBubbleOn: html.
+	html 
+    	with: self faceWidget; 
+    	with: self bubbleWidget.
 	self renderCurrentStageOn: html.
 !
 
@@ -144,10 +225,6 @@ renderErrorAudioOn: html
 	html audio 
     	class: 'error';
         src: 'sounds/error.ogg'
-!
-
-renderFaceOn: html
-	html with: self faceWidget
 !
 
 renderOn: html

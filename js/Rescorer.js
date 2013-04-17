@@ -1,5 +1,61 @@
 smalltalk.addPackage('Rescorer', {});
-smalltalk.addClass('BubbleWidget', smalltalk.Widget, ['bubbleSpan'], 'Rescorer');
+smalltalk.addClass('BubbleWidget', smalltalk.Widget, ['bubbleSpan', 'happyTexts', 'sadTexts'], 'Rescorer');
+smalltalk.addMethod(
+"_beHappy",
+smalltalk.method({
+selector: "beHappy",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_text_",[smalltalk.send(smalltalk.send(self,"_happyTexts",[]),"_atRandom",[])]);
+return self},
+args: [],
+source: "beHappy\x0a\x09self text: self happyTexts atRandom.",
+messageSends: ["text:", "atRandom", "happyTexts"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
+smalltalk.addMethod(
+"_beSad",
+smalltalk.method({
+selector: "beSad",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_text_",[smalltalk.send(smalltalk.send(self,"_sadTexts",[]),"_atRandom",[])]);
+return self},
+args: [],
+source: "beSad\x0a\x09self text: self sadTexts atRandom.",
+messageSends: ["text:", "atRandom", "sadTexts"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
+smalltalk.addMethod(
+"_happyTexts",
+smalltalk.method({
+selector: "happyTexts",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@happyTexts"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@happyTexts"]=["Molt bé! Et veig en forma!", "Has estat practicant d'amagat? Ho fas molt bé!", "Estic orgullós de tu!", "Tenim a Beethoven entre nosaltres!", "Disc de platí per a tu!", "Ho portes molt bé!", "Segueix així!", "Endavant!", "Ho fas millor que jo!", "En saps molt!", "No perdis el ritme, que ho estàs fent genial!", "Fantàstic!", "Meravellós!", "Brillant!", "Excel·lent!", "Perfecte!", "Genial!", "Bé!", "Molt bé!", "Quina melodia!", "Ets el Vivaldi del segle XXI!", "Quin domini!", "Quin nivell!", "Així m'agrada!", "Boníssim!", "Es nota que sóc un gran mestre!", "Aquesta no la sabia ni jo!", "Ets una màquina!", "En saps molt més que jo!", "Quan és el teu proper concert?"];
+$1=self["@happyTexts"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "happyTexts\x0a\x09^ happyTexts ifNil: [ happyTexts := #(\x0a    'Molt bé! Et veig en forma!'\x0a    'Has estat practicant d''amagat? Ho fas molt bé!'\x0a    'Estic orgullós de tu!'\x0a    'Tenim a Beethoven entre nosaltres!'\x0a    'Disc de platí per a tu!'\x0a    'Ho portes molt bé!'\x0a    'Segueix així!'\x0a    'Endavant!'\x0a    'Ho fas millor que jo!'\x0a    'En saps molt!'\x0a    'No perdis el ritme, que ho estàs fent genial!'\x0a    'Fantàstic!'\x0a    'Meravellós!'\x0a    'Brillant!'\x0a    'Excel·lent!'\x0a    'Perfecte!'\x0a    'Genial!'\x0a    'Bé!'\x0a    'Molt bé!'\x0a    'Quina melodia!'\x0a    'Ets el Vivaldi del segle XXI!'\x0a    'Quin domini!'\x0a    'Quin nivell!'\x0a    'Així m''agrada!'\x0a    'Boníssim!'\x0a    'Es nota que sóc un gran mestre!'\x0a    'Aquesta no la sabia ni jo!'\x0a    'Ets una màquina!'\x0a    'En saps molt més que jo!'\x0a    'Quan és el teu proper concert?') ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
 smalltalk.addMethod(
 "_renderOn_",
 smalltalk.method({
@@ -22,6 +78,30 @@ return self},
 args: ["html"],
 source: "renderOn: html\x0a\x09html div\x0a    \x09class: 'bubble';\x0a    \x09contents: [ :h | \x0a            h img \x0a            \x09class: 'tip';\x0a                src: 'images/bubble-tip.svg'.\x0a\x09\x09\x09bubbleSpan := h span ]",
 messageSends: ["class:", "div", "contents:", "img", "src:", "span"],
+referencedClasses: []
+}),
+smalltalk.BubbleWidget);
+
+smalltalk.addMethod(
+"_sadTexts",
+smalltalk.method({
+selector: "sadTexts",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@sadTexts"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@sadTexts"]=["T'hi hauràs d'esforçar una mica més si vols arribar a ser tan gran com jo!", "Noooo!", "Aix... malament...", "No era aquesta, no...", "Torna-ho a provar, vinga!", "Intenta-ho una altra vegada!", "No passa res, tothom s'equivoca!", "Errare humanum est.", "Fins i tot jo m'equivoco, de vegades!", "Encara et falta una mica per saber-ne tant com jo!", "Hauràs de practicar una miqueta més...", "No et preocupis, un error el té tothom!", "Va, que sé que ho pots fer molt millor!", "Aquesta nota no era...", "Vinga, una altra oportunitat!", "Segur?", "Doncs no era aquesta!", "Error!", "Em penso que t'has equivocat!", "Esforça-t'hi més...", "Aquesta la sabies! Torna-ho a provar!", "Fixa-t'hi més!", "No és correcte, però no et desesperis. Torna-ho a intentar!", "Mira-t'ho una mica millor...", "Has fallat!", "Que no escoltes a classe?", "No és correcte...", "Va, una altra oportunitat...", "Ho pots fer molt millor...", "Hauràs de repassar una mica!", "Això no ha sonat bé..."];
+$1=self["@sadTexts"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "sadTexts\x0a\x09^ sadTexts ifNil: [ sadTexts := #(\x0a    'T''hi hauràs d''esforçar una mica més si vols arribar a ser tan gran com jo!'\x0a    'Noooo!'\x0a    'Aix... malament...'\x0a    'No era aquesta, no...'\x0a    'Torna-ho a provar, vinga!'\x0a    'Intenta-ho una altra vegada!'\x0a    'No passa res, tothom s''equivoca!'\x0a    'Errare humanum est.'\x0a    'Fins i tot jo m''equivoco, de vegades!'\x0a    'Encara et falta una mica per saber-ne tant com jo!'\x0a    'Hauràs de practicar una miqueta més...'\x0a    'No et preocupis, un error el té tothom!'\x0a    'Va, que sé que ho pots fer molt millor!'\x0a    'Aquesta nota no era...'\x0a    'Vinga, una altra oportunitat!'\x0a    'Segur?'\x0a    'Doncs no era aquesta!'\x0a    'Error!'\x0a    'Em penso que t''has equivocat!'\x0a    'Esforça-t''hi més...'\x0a    'Aquesta la sabies! Torna-ho a provar!'\x0a    'Fixa-t''hi més!'\x0a    'No és correcte, però no et desesperis. Torna-ho a intentar!'\x0a    'Mira-t''ho una mica millor...'\x0a    'Has fallat!'\x0a    'Que no escoltes a classe?'\x0a    'No és correcte...'\x0a    'Va, una altra oportunitat...'\x0a    'Ho pots fer molt millor...'\x0a    'Hauràs de repassar una mica!'\x0a    'Això no ha sonat bé...'\x0a    ) ]",
+messageSends: ["ifNil:"],
 referencedClasses: []
 }),
 smalltalk.BubbleWidget);
@@ -157,7 +237,7 @@ smalltalk.FaceWidget);
 
 
 
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'errorAudio', 'mood', 'faceWidget'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'errorAudio', 'faceWidget'], 'Rescorer');
 smalltalk.addMethod(
 "_bubbleWidget",
 smalltalk.method({
@@ -214,11 +294,12 @@ fn: function (){
 var self=this;
 smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNote",[]),"_play",[]);
 smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
 return self},
 args: [],
-source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self faceWidget beHappy.\x0a\x09self sheetWidget nextNote",
-messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "faceWidget", "nextNote"],
+source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self faceWidget beHappy.\x0a    self bubbleWidget beHappy.\x0a\x09self sheetWidget nextNote",
+messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "faceWidget", "bubbleWidget", "nextNote"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -366,35 +447,21 @@ referencedClasses: []
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
-"_renderBubbleOn_",
-smalltalk.method({
-selector: "renderBubbleOn:",
-category: 'rendering',
-fn: function (html){
-var self=this;
-smalltalk.send(html,"_with_",[smalltalk.send(self,"_bubbleWidget",[])]);
-return self},
-args: ["html"],
-source: "renderBubbleOn: html\x0a\x09html with: self bubbleWidget",
-messageSends: ["with:", "bubbleWidget"],
-referencedClasses: []
-}),
-smalltalk.GameWidget);
-
-smalltalk.addMethod(
 "_renderContentOn_",
 smalltalk.method({
 selector: "renderContentOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-smalltalk.send(self,"_renderFaceOn_",[html]);
-smalltalk.send(self,"_renderBubbleOn_",[html]);
+var $1,$2;
+$1=html;
+smalltalk.send($1,"_with_",[smalltalk.send(self,"_faceWidget",[])]);
+$2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_bubbleWidget",[])]);
 smalltalk.send(self,"_renderCurrentStageOn_",[html]);
 return self},
 args: ["html"],
-source: "renderContentOn: html\x0a\x09self renderFaceOn: html.\x0a\x09self renderBubbleOn: html.\x0a\x09self renderCurrentStageOn: html.",
-messageSends: ["renderFaceOn:", "renderBubbleOn:", "renderCurrentStageOn:"],
+source: "renderContentOn: html\x0a\x09html \x0a    \x09with: self faceWidget; \x0a    \x09with: self bubbleWidget.\x0a\x09self renderCurrentStageOn: html.",
+messageSends: ["with:", "faceWidget", "bubbleWidget", "renderCurrentStageOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -484,22 +551,6 @@ fn: function (html) {
 args: ["html"],
 source: "renderErrorAudioOn: html\x0a\x09html audio \x0a    \x09class: 'error';\x0a        src: 'sounds/error.ogg'",
 messageSends: ["class:", "audio", "src:"],
-referencedClasses: []
-}),
-smalltalk.GameWidget);
-
-smalltalk.addMethod(
-"_renderFaceOn_",
-smalltalk.method({
-selector: "renderFaceOn:",
-category: 'rendering',
-fn: function (html){
-var self=this;
-smalltalk.send(html,"_with_",[smalltalk.send(self,"_faceWidget",[])]);
-return self},
-args: ["html"],
-source: "renderFaceOn: html\x0a\x09html with: self faceWidget",
-messageSends: ["with:", "faceWidget"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -685,13 +736,14 @@ fn: function (){
 var self=this;
 smalltalk.send(self,"_playErrorSound",[]);
 smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beSad",[]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beSad",[]);
 smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
 return self},
 args: [],
-source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self faceWidget beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
-messageSends: ["playErrorSound", "beSad", "faceWidget", "contents:", "renderErrorAudioOn:"],
+source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self faceWidget beSad.\x0a    self bubbleWidget beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
+messageSends: ["playErrorSound", "beSad", "faceWidget", "bubbleWidget", "contents:", "renderErrorAudioOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
