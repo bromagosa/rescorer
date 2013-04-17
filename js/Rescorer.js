@@ -237,7 +237,7 @@ smalltalk.FaceWidget);
 
 
 
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'errorAudio', 'faceWidget'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'faceWidget', 'timerWidget', 'scoreWidget', 'errorAudio', 'difficulty', 'failedFlag'], 'Rescorer');
 smalltalk.addMethod(
 "_bubbleWidget",
 smalltalk.method({
@@ -296,10 +296,31 @@ smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNo
 smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_reset",[]);
+smalltalk.send(smalltalk.send(self,"_scoreWidget",[]),"_addScore_",[smalltalk.send(self,"_currentNoteScore",[])]);
+smalltalk.send(self,"_failedFlag_",[(1)]);
 return self},
 args: [],
-source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self faceWidget beHappy.\x0a    self bubbleWidget beHappy.\x0a\x09self sheetWidget nextNote",
-messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "faceWidget", "bubbleWidget", "nextNote"],
+source: "correctAnswerAction\x0a\x09self sheetWidget currentNote play.\x0a    self faceWidget beHappy.\x0a    self bubbleWidget beHappy.\x0a\x09self sheetWidget nextNote.\x0a    self timerWidget reset.\x0a    self scoreWidget addScore: self currentNoteScore.\x0a    self failedFlag: 1",
+messageSends: ["play", "currentNote", "sheetWidget", "beHappy", "faceWidget", "bubbleWidget", "nextNote", "reset", "timerWidget", "addScore:", "currentNoteScore", "scoreWidget", "failedFlag:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_currentNoteScore",
+smalltalk.method({
+selector: "currentNoteScore",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_currentSecondsPerNote",[]),"__star",[smalltalk.send(self,"_difficulty",[])]),"__star",[smalltalk.send(self,"_failedFlag",[])]);
+return $1;
+},
+args: [],
+source: "currentNoteScore\x0a\x09^ self timerWidget currentSecondsPerNote * self difficulty * self failedFlag",
+messageSends: ["*", "failedFlag", "difficulty", "currentSecondsPerNote", "timerWidget"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -329,6 +350,57 @@ referencedClasses: []
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_difficulty",
+smalltalk.method({
+selector: "difficulty",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@difficulty"];
+return $1;
+},
+args: [],
+source: "difficulty\x0a\x09^ difficulty",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_difficulty_",
+smalltalk.method({
+selector: "difficulty:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@difficulty"]=anInteger;
+return self},
+args: ["anInteger"],
+source: "difficulty: anInteger\x0a\x09difficulty := anInteger",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_end",
+smalltalk.method({
+selector: "end",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_nextStage",[]);
+smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
+return self},
+args: [],
+source: "end\x0a\x09self nextStage.\x0a\x09self faceWidget beHappy.",
+messageSends: ["nextStage", "beHappy", "faceWidget"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_faceWidget",
 smalltalk.method({
 selector: "faceWidget",
@@ -349,6 +421,86 @@ args: [],
 source: "faceWidget\x0a\x09^ faceWidget ifNil: [ faceWidget := FaceWidget new ]",
 messageSends: ["ifNil:", "new"],
 referencedClasses: ["FaceWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_failedFlag",
+smalltalk.method({
+selector: "failedFlag",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@failedFlag"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@failedFlag"]=(1);
+$1=self["@failedFlag"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "failedFlag\x0a\x09^ failedFlag ifNil: [ failedFlag := 1 ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_failedFlag_",
+smalltalk.method({
+selector: "failedFlag:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@failedFlag"]=anInteger;
+return self},
+args: ["anInteger"],
+source: "failedFlag: anInteger\x0a\x09failedFlag := anInteger",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_globalScore",
+smalltalk.method({
+selector: "globalScore",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@globalScore"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@globalScore"]=(0);
+$1=self["@globalScore"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "globalScore\x0a\x09^ globalScore ifNil: [ globalScore := 0 ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_globalScore_",
+smalltalk.method({
+selector: "globalScore:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@globalScore"]=anInteger;
+return self},
+args: ["anInteger"],
+source: "globalScore: anInteger\x0a\x09globalScore := anInteger",
+messageSends: [],
+referencedClasses: []
 }),
 smalltalk.GameWidget);
 
@@ -479,7 +631,7 @@ selector: "renderCurrentStageOn:",
 category: 'rendering - stages',
 fn: function (html){
 var self=this;
-var $1,$2,$3,$4;
+var $1,$2,$3,$4,$5,$6;
 $1=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("difficultySelection")]);
 if(smalltalk.assert($1)){
 smalltalk.send(self,"_renderDifficultySelectionStageOn_",[html]);
@@ -488,18 +640,26 @@ $2=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symb
 if(smalltalk.assert($2)){
 smalltalk.send(self,"_renderSpeedSelectionStageOn_",[html]);
 };
-$3=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("keySelection")]);
+$3=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("timeSelection")]);
 if(smalltalk.assert($3)){
+smalltalk.send(self,"_renderGameTimeSelectionStageOn_",[html]);
+};
+$4=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("keySelection")]);
+if(smalltalk.assert($4)){
 smalltalk.send(self,"_renderKeySelectionStageOn_",[html]);
 };
-$4=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("game")]);
-if(smalltalk.assert($4)){
+$5=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("game")]);
+if(smalltalk.assert($5)){
 smalltalk.send(self,"_renderGameStageOn_",[html]);
+};
+$6=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("end")]);
+if(smalltalk.assert($6)){
+smalltalk.send(self,"_renderEndStageOn_",[html]);
 };
 return self},
 args: ["html"],
-source: "renderCurrentStageOn: html\x0a\x09self currentStage = #difficultySelection ifTrue: [ self renderDifficultySelectionStageOn: html ].\x0a\x09self currentStage = #speedSelection ifTrue: [ self renderSpeedSelectionStageOn: html ].\x0a\x09self currentStage = #keySelection ifTrue: [ self renderKeySelectionStageOn: html ].\x0a\x09self currentStage = #game ifTrue: [ self renderGameStageOn: html ].",
-messageSends: ["ifTrue:", "renderDifficultySelectionStageOn:", "=", "currentStage", "renderSpeedSelectionStageOn:", "renderKeySelectionStageOn:", "renderGameStageOn:"],
+source: "renderCurrentStageOn: html\x0a\x09self currentStage = #difficultySelection ifTrue: [ self renderDifficultySelectionStageOn: html ].\x0a\x09self currentStage = #speedSelection ifTrue: [ self renderSpeedSelectionStageOn: html ].\x0a    self currentStage = #timeSelection ifTrue: [ self renderGameTimeSelectionStageOn: html ].\x0a\x09self currentStage = #keySelection ifTrue: [ self renderKeySelectionStageOn: html ].\x0a\x09self currentStage = #game ifTrue: [ self renderGameStageOn: html ].\x0a    self currentStage = #end ifTrue: [ self renderEndStageOn: html ].",
+messageSends: ["ifTrue:", "renderDifficultySelectionStageOn:", "=", "currentStage", "renderSpeedSelectionStageOn:", "renderGameTimeSelectionStageOn:", "renderKeySelectionStageOn:", "renderGameStageOn:", "renderEndStageOn:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -516,27 +676,50 @@ var stage;
 stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
 $1=smalltalk.send(stage,"_buttons",[]);
 smalltalk.send($1,"_at_put_",["Principiant",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(1)]);
+smalltalk.send(self,"_difficulty_",[(1)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Iniciat",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(2)]);
+smalltalk.send(self,"_difficulty_",[(2)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Expert",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(3)]);
+smalltalk.send(self,"_difficulty_",[(3)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 $2=smalltalk.send($1,"_at_put_",["Virtuós",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(4)]);
+smalltalk.send(self,"_difficulty_",[(4)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["A quin nivell de dificultat vols jugar?"]);
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self sheetWidget difficulty: 4.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.\x0a\x09html with: stage.",
-messageSends: ["new", "at:put:", "difficulty:", "sheetWidget", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
+source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self difficulty: 4.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "difficulty:", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
+referencedClasses: ["OptionSelectionWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderEndStageOn_",
+smalltalk.method({
+selector: "renderEndStageOn:",
+category: 'rendering - stages',
+fn: function (html){
+var self=this;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+smalltalk.send(smalltalk.send(stage,"_buttons",[]),"_at_put_",["Nova partida",(function(){
+smalltalk.send(self,"_resetGame",[]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",[smalltalk.send(smalltalk.send("S'ha acabat el temps! La teva puntuació final és de ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_scoreWidget",[]),"_globalScore",[]),"_asString",[])]),"__comma",[" punts."])]);
+smalltalk.send(html,"_with_",[stage]);
+return self},
+args: ["html"],
+source: "renderEndStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Nova partida' \x0a            \x09put: [\x0a                \x09self resetGame. \x0a            \x09\x09self nextStage ].\x0a\x09self bubbleWidget text: 'S''ha acabat el temps! La teva puntuació final és de ' , self scoreWidget globalScore asString , ' punts.'.\x0a    html with: stage.",
+messageSends: ["new", "at:put:", "resetGame", "nextStage", "buttons", "text:", ",", "asString", "globalScore", "scoreWidget", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);
@@ -568,22 +751,78 @@ selector: "renderGameStageOn:",
 category: 'rendering - stages',
 fn: function (html){
 var self=this;
-var $1,$2,$3,$4;
+var $1,$2,$3,$4,$5,$6,$7,$8;
 $1=smalltalk.send(html,"_div",[]);
 smalltalk.send($1,"_class_",["sheet-container"]);
 $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
 $3=smalltalk.send(html,"_div",[]);
 smalltalk.send($3,"_class_",["note-buttons-container"]);
 $4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+$5=smalltalk.send(html,"_div",[]);
+smalltalk.send($5,"_class_",["score"]);
+$6=smalltalk.send($5,"_with_",[smalltalk.send(self,"_scoreWidget",[])]);
+$7=smalltalk.send(html,"_div",[]);
+smalltalk.send($7,"_class_",["timer"]);
+$8=smalltalk.send($7,"_with_",[smalltalk.send(self,"_timerWidget",[])]);
 smalltalk.send(self,"_renderAudioElementsOn_",[html]);
 self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
 return self},
 args: ["html"],
-source: "renderGameStageOn: html\x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: self sheetWidget.\x0a\x09html div \x0a    \x09class: 'note-buttons-container';\x0a    \x09with: self noteButtonsWidget.\x0a    self renderAudioElementsOn: html.\x0a\x09errorAudio := html div with: [ self renderErrorAudioOn: html ]",
-messageSends: ["class:", "div", "with:", "sheetWidget", "noteButtonsWidget", "renderAudioElementsOn:", "renderErrorAudioOn:"],
+source: "renderGameStageOn: html\x0a\x09html div \x0a    \x09class: 'sheet-container';\x0a    \x09with: self sheetWidget.\x0a\x09html div \x0a    \x09class: 'note-buttons-container';\x0a    \x09with: self noteButtonsWidget.\x0a\x09html div\x0a    \x09class: 'score';\x0a        with: self scoreWidget.\x0a\x09html div\x0a    \x09class: 'timer';\x0a        with: self timerWidget.\x0a    self renderAudioElementsOn: html.\x0a\x09errorAudio := html div with: [ self renderErrorAudioOn: html ]",
+messageSends: ["class:", "div", "with:", "sheetWidget", "noteButtonsWidget", "scoreWidget", "timerWidget", "renderAudioElementsOn:", "renderErrorAudioOn:"],
 referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderGameTimeSelectionStageOn_",
+smalltalk.method({
+selector: "renderGameTimeSelectionStageOn:",
+category: 'rendering - stages',
+fn: function (html){
+var self=this;
+var $1,$3,$5,$8,$7,$6,$4,$2;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+$1=smalltalk.send(stage,"_buttons",[]);
+smalltalk.send($1,"_at_put_",["10 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((10),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["5 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((5),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["2 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((2),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+$3=$1;
+$4=(function(){
+var time;
+time=smalltalk.send(smalltalk.send(window,"_prompt_",["Quants minuts?"]),"_asNumber",[]);
+time;
+$5=smalltalk.send(self,"_timerWidget",[]);
+$8=smalltalk.send(time,"__gt",[(0)]);
+if(smalltalk.assert($8)){
+$7=time;
+} else {
+$7=(5);
+};
+$6=smalltalk.send($7,"__star",[(60)]);
+smalltalk.send($5,"_globalSeconds_",[$6]);
+return smalltalk.send(self,"_nextStage",[]);
+});
+$2=smalltalk.send($3,"_at_put_",["custom",$4]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["Quants minuts vols que duri la partida?"]);
+smalltalk.send(html,"_with_",[stage]);
+return self},
+args: ["html"],
+source: "renderGameTimeSelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: '10 minuts' \x0a            \x09put: [\x0a                \x09self timerWidget globalSeconds: 10 * 60.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: '5 minuts' \x0a            \x09put: [\x0a                \x09self timerWidget globalSeconds: 5 * 60.\x0a            \x09\x09self nextStage ]; \x0a\x09\x09\x09at: '2 minuts'\x0a            \x09put: [ \x0a                \x09self timerWidget globalSeconds: 2 * 60.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'custom' \x0a            \x09put: [\x0a                  \x09| time |\x0a                    time := (window prompt: 'Quants minuts?') asNumber.\x0a                \x09self timerWidget globalSeconds: (time > 0 ifFalse: [ 5 ] ifTrue: [ time ]) * 60.\x0a            \x09\x09self nextStage ].\x0a\x09self bubbleWidget text: 'Quants minuts vols que duri la partida?'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "globalSeconds:", "*", "timerWidget", "nextStage", "buttons", "asNumber", "prompt:", "ifFalse:ifTrue:", ">", "text:", "bubbleWidget", "with:"],
+referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);
 
@@ -650,29 +889,34 @@ var stage;
 stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
 $1=smalltalk.send(stage,"_buttons",[]);
 smalltalk.send($1,"_at_put_",["Adagio",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(70)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(10)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Andante",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(100)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(6)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Allegro",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(130)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(3)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Presto",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(170)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(1)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 $3=$1;
 $4=(function(){
-$5=smalltalk.send(self,"_sheetWidget",[]);
-$7=smalltalk.send(smalltalk.send(smalltalk.send(window,"_prompt_",["BPM?"]),"_asNumber",[]),"__gt",[(0)]);
-if(! smalltalk.assert($7)){
+var time;
+time=smalltalk.send(smalltalk.send(window,"_prompt_",["Segons per nota?"]),"_asNumber",[]);
+time;
+$5=smalltalk.send(self,"_timerWidget",[]);
+$7=smalltalk.send(time,"__gt",[(0)]);
+if(smalltalk.assert($7)){
+$6=time;
+} else {
 $6=(70);
 };
-smalltalk.send($5,"_bpm_",[$6]);
+smalltalk.send($5,"_secondsPerNote_",[$6]);
 return smalltalk.send(self,"_nextStage",[]);
 });
 $2=smalltalk.send($3,"_at_put_",["Custom",$4]);
@@ -680,9 +924,68 @@ smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["I a quin tempo
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderSpeedSelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Adagio'\x0a            \x09put: [\x0a                \x09self sheetWidget bpm: 70. \x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Andante'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 100.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Allegro'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 130.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Presto'\x0a            \x09put: [ \x0a                \x09self sheetWidget bpm: 170.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Custom'\x0a            \x09put: [\x0a                  \x09self sheetWidget bpm: ((window prompt: 'BPM?') asNumber > 0 ifFalse: [ 70 ]).\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'I a quin tempo?'.\x0a\x09html with: stage.",
-messageSends: ["new", "at:put:", "bpm:", "sheetWidget", "nextStage", "buttons", "ifFalse:", ">", "asNumber", "prompt:", "text:", "bubbleWidget", "with:"],
+source: "renderSpeedSelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons \x0a        \x09at: 'Adagio'\x0a            \x09put: [\x0a                \x09self timerWidget secondsPerNote: 10. \x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Andante'\x0a            \x09put: [ \x0a                \x09self timerWidget secondsPerNote: 6.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Allegro'\x0a            \x09put: [ \x0a                \x09self timerWidget secondsPerNote: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Presto'\x0a            \x09put: [ \x0a                \x09self timerWidget secondsPerNote: 1.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Custom'\x0a            \x09put: [\x0a                  \x09| time |\x0a                    time := (window prompt: 'Segons per nota?') asNumber.\x0a                  \x09self timerWidget secondsPerNote: (time > 0 ifFalse: [ 70 ] ifTrue: [ time ]).\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'I a quin tempo?'.\x0a\x09html with: stage.",
+messageSends: ["new", "at:put:", "secondsPerNote:", "timerWidget", "nextStage", "buttons", "asNumber", "prompt:", "ifFalse:ifTrue:", ">", "text:", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_resetCurrentNoteScore",
+smalltalk.method({
+selector: "resetCurrentNoteScore",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_currentNoteScore_",[(0)]);
+return self},
+args: [],
+source: "resetCurrentNoteScore\x0a\x09self currentNoteScore: 0",
+messageSends: ["currentNoteScore:"],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_resetGame",
+smalltalk.method({
+selector: "resetGame",
+category: 'actions',
+fn: function (){
+var self=this;
+self["@sheetWidget"]=nil;
+self["@timerWidget"]=nil;
+self["@scoreWidget"]=nil;
+self["@difficulty"]=nil;
+return self},
+args: [],
+source: "resetGame\x0a\x09sheetWidget := nil.\x0a    timerWidget := nil.\x0a    scoreWidget := nil.\x0a    difficulty := nil.",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_scoreWidget",
+smalltalk.method({
+selector: "scoreWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@scoreWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@scoreWidget"]=smalltalk.send((smalltalk.ScoreWidget || ScoreWidget),"_new",[]);
+$1=self["@scoreWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "scoreWidget\x0a\x09^ scoreWidget ifNil: [ scoreWidget := ScoreWidget new ]",
+messageSends: ["ifNil:", "new"],
+referencedClasses: ["ScoreWidget"]
 }),
 smalltalk.GameWidget);
 
@@ -717,12 +1020,36 @@ selector: "stageNames",
 category: 'accessing',
 fn: function (){
 var self=this;
-return [smalltalk.symbolFor("difficultySelection"), smalltalk.symbolFor("speedSelection"), smalltalk.symbolFor("keySelection"), smalltalk.symbolFor("game")];
+return [smalltalk.symbolFor("difficultySelection"), smalltalk.symbolFor("speedSelection"), smalltalk.symbolFor("timeSelection"), smalltalk.symbolFor("keySelection"), smalltalk.symbolFor("game"), smalltalk.symbolFor("end")];
 },
 args: [],
-source: "stageNames\x0a\x09^ #(#difficultySelection #speedSelection #keySelection #game).",
+source: "stageNames\x0a\x09^ #(#difficultySelection #speedSelection #timeSelection #keySelection #game #end).",
 messageSends: [],
 referencedClasses: []
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_timerWidget",
+smalltalk.method({
+selector: "timerWidget",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@timerWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@timerWidget"]=smalltalk.send(smalltalk.send((smalltalk.TimerWidget || TimerWidget),"_new",[]),"_game_",[self]);
+$1=self["@timerWidget"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "timerWidget\x0a\x09^ timerWidget ifNil: [ timerWidget := TimerWidget new game: self ]",
+messageSends: ["ifNil:", "game:", "new"],
+referencedClasses: ["TimerWidget"]
 }),
 smalltalk.GameWidget);
 
@@ -757,10 +1084,11 @@ smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beSad",[]);
 smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
+smalltalk.send(self,"_failedFlag_",[(0)]);
 return self},
 args: [],
-source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self faceWidget beSad.\x0a    self bubbleWidget beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ]",
-messageSends: ["playErrorSound", "beSad", "faceWidget", "bubbleWidget", "contents:", "renderErrorAudioOn:"],
+source: "wrongAnswerAction\x0a\x09self playErrorSound.\x0a    self faceWidget beSad.\x0a    self bubbleWidget beSad.\x0a    errorAudio contents: [ :html | self renderErrorAudioOn: html ].\x0a    self failedFlag: 0",
+messageSends: ["playErrorSound", "beSad", "faceWidget", "bubbleWidget", "contents:", "renderErrorAudioOn:", "failedFlag:"],
 referencedClasses: []
 }),
 smalltalk.GameWidget);
@@ -1397,41 +1725,100 @@ smalltalk.OptionSelectionWidget);
 
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'bpm', 'difficulty', 'noteDiv', 'currentNote', 'game', 'notePositions'], 'Rescorer');
+smalltalk.addClass('ScoreWidget', smalltalk.Widget, ['globalScore', 'span'], 'Rescorer');
 smalltalk.addMethod(
-"_bpm",
+"_addScore_",
 smalltalk.method({
-selector: "bpm",
-category: 'accessing',
+selector: "addScore:",
+category: 'actions',
+fn: function (anInteger){
+var self=this;
+smalltalk.send(self,"_globalScore_",[smalltalk.send(smalltalk.send(self,"_globalScore",[]),"__plus",[anInteger])]);
+smalltalk.send(self,"_updateSpan",[]);
+return self},
+args: ["anInteger"],
+source: "addScore: anInteger\x0a\x09self globalScore: self globalScore + anInteger.\x0a    self updateSpan",
+messageSends: ["globalScore:", "+", "globalScore", "updateSpan"],
+referencedClasses: []
+}),
+smalltalk.ScoreWidget);
+
+smalltalk.addMethod(
+"_globalScore",
+smalltalk.method({
+selector: "globalScore",
+category: 'rendering',
 fn: function (){
 var self=this;
-var $1;
-$1=self["@bpm"];
+var $2,$1;
+$2=self["@globalScore"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@globalScore"]=(0);
+$1=self["@globalScore"];
+} else {
+$1=$2;
+};
 return $1;
 },
 args: [],
-source: "bpm\x0a\x09^ bpm",
-messageSends: [],
+source: "globalScore\x0a\x09^ globalScore ifNil: [ globalScore := 0 ]",
+messageSends: ["ifNil:"],
 referencedClasses: []
 }),
-smalltalk.SheetWidget);
+smalltalk.ScoreWidget);
 
 smalltalk.addMethod(
-"_bpm_",
+"_globalScore_",
 smalltalk.method({
-selector: "bpm:",
-category: 'accessing',
+selector: "globalScore:",
+category: 'rendering',
 fn: function (anInteger){
 var self=this;
-self["@bpm"]=anInteger;
+self["@globalScore"]=anInteger;
 return self},
 args: ["anInteger"],
-source: "bpm: anInteger\x0a\x09bpm := anInteger",
+source: "globalScore: anInteger\x0a\x09globalScore := anInteger",
 messageSends: [],
 referencedClasses: []
 }),
-smalltalk.SheetWidget);
+smalltalk.ScoreWidget);
 
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+self["@span"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["score"]);
+smalltalk.send(self,"_updateSpan",[]);
+return self},
+args: ["html"],
+source: "renderOn: html\x0a\x09span := \x0a    \x09html span \x0a    \x09\x09class: 'score'.\x0a\x09self updateSpan.",
+messageSends: ["class:", "span", "updateSpan"],
+referencedClasses: []
+}),
+smalltalk.ScoreWidget);
+
+smalltalk.addMethod(
+"_updateSpan",
+smalltalk.method({
+selector: "updateSpan",
+category: 'updating',
+fn: function (){
+var self=this;
+smalltalk.send(self["@span"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_globalScore",[]),"_asString",[]),"__comma",[" punts"])]);
+return self},
+args: [],
+source: "updateSpan\x0a\x09span contents: self globalScore asString , ' punts'",
+messageSends: ["contents:", ",", "asString", "globalScore"],
+referencedClasses: []
+}),
+smalltalk.ScoreWidget);
+
+
+
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'difficulty', 'noteDiv', 'currentNote', 'game', 'notePositions'], 'Rescorer');
 smalltalk.addMethod(
 "_currentNote",
 smalltalk.method({
@@ -1452,40 +1839,6 @@ fn: function () {
 args: [],
 source: "currentNote\x0a\x09^ currentNote ifNil: [ self nextNote. currentNote ]",
 messageSends: ["ifNil:", "nextNote"],
-referencedClasses: []
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_difficulty",
-smalltalk.method({
-selector: "difficulty",
-category: 'accessing',
-fn: function (){
-var self=this;
-var $1;
-$1=self["@difficulty"];
-return $1;
-},
-args: [],
-source: "difficulty\x0a\x09^ difficulty",
-messageSends: [],
-referencedClasses: []
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_difficulty_",
-smalltalk.method({
-selector: "difficulty:",
-category: 'accessing',
-fn: function (anInteger){
-var self=this;
-self["@difficulty"]=anInteger;
-return self},
-args: ["anInteger"],
-source: "difficulty: anInteger\x0a\x09difficulty := anInteger",
-messageSends: [],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -1614,7 +1967,7 @@ smalltalk.send($3,"_at_put_",[(2),smalltalk.send((1),"_to_",[(13)])]);
 smalltalk.send($3,"_at_put_",[(3),smalltalk.send((1),"_to_",[(13)])]);
 smalltalk.send($3,"_at_put_",[(4),smalltalk.send((1),"_to_",[(15)])]);
 $4=smalltalk.send($3,"_yourself",[]);
-self["@notePositions"]=smalltalk.send($4,"_at_",[smalltalk.send(self,"_difficulty",[])]);
+self["@notePositions"]=smalltalk.send($4,"_at_",[smalltalk.send(smalltalk.send(self,"_game",[]),"_difficulty",[])]);
 $1=self["@notePositions"];
 } else {
 $1=$2;
@@ -1622,25 +1975,9 @@ $1=$2;
 return $1;
 },
 args: [],
-source: "notePositions\x0a   ^ notePositions \x0a    \x09ifNil: [ notePositions := \x0a    \x09\x09(Dictionary new \x0a            \x09at: 1 put: (1 to: 8);\x0a                at: 2 put: (1 to: 13);\x0a                at: 3 put: (1 to: 13);\x0a                at: 4 put: (1 to: 15);\x0a\x09\x09\x09\x09yourself) at: self difficulty ]",
-messageSends: ["ifNil:", "at:", "difficulty", "at:put:", "to:", "new", "yourself"],
+source: "notePositions\x0a   ^ notePositions \x0a    \x09ifNil: [ notePositions := \x0a    \x09\x09(Dictionary new \x0a            \x09at: 1 put: (1 to: 8);\x0a                at: 2 put: (1 to: 13);\x0a                at: 3 put: (1 to: 13);\x0a                at: 4 put: (1 to: 15);\x0a\x09\x09\x09\x09yourself) at: self game difficulty ]",
+messageSends: ["ifNil:", "at:", "difficulty", "game", "at:put:", "to:", "new", "yourself"],
 referencedClasses: ["Dictionary"]
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_play",
-smalltalk.method({
-selector: "play",
-category: 'accessing',
-fn: function () {
-    var self = this;
-    return self;
-},
-args: [],
-source: "play\x0a",
-messageSends: [],
-referencedClasses: []
 }),
 smalltalk.SheetWidget);
 
@@ -1680,7 +2017,7 @@ smalltalk.send($3,"_class_",[smalltalk.send("line i","__comma",[smalltalk.send(i
 $5=$3;
 $7=smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(index,"__star",[(12.5)]),"_asString",[])]),"__comma",["%;"]);
 $9=smalltalk.send(smalltalk.send(index,"__eq",[(4)]),"_and_",[(function(){
-return smalltalk.send(self["@difficulty"],"__eq",[(2)]);
+return smalltalk.send(smalltalk.send(smalltalk.send(self,"_game",[]),"_difficulty",[]),"__eq",[(2)]);
 })]);
 if(smalltalk.assert($9)){
 $8="background-color: red;";
@@ -1694,8 +2031,8 @@ return $4;
 self["@lines"]=smalltalk.send($1,"_collect_",[$2]);
 return self},
 args: ["html"],
-source: "renderLinesOn: html\x0a\x09lines := (1 to: 7) collect: [ :index | \x0a    \x09html hr \x0a        \x09class: 'line i' , index asString;\x0a        \x09style: 'bottom: ' , (index * 12.5) asString , '%;' , ((index = 4 and: [ difficulty = 2 ]) ifTrue: [ 'background-color: red;' ] ifFalse: [ '' ]) ]",
-messageSends: ["collect:", "class:", ",", "asString", "hr", "style:", "ifTrue:ifFalse:", "and:", "=", "*", "to:"],
+source: "renderLinesOn: html\x0a\x09lines := (1 to: 7) collect: [ :index | \x0a    \x09html hr \x0a        \x09class: 'line i' , index asString;\x0a        \x09style: 'bottom: ' , (index * 12.5) asString , '%;' , ((index = 4 and: [ self game difficulty = 2 ]) ifTrue: [ 'background-color: red;' ] ifFalse: [ '' ]) ]",
+messageSends: ["collect:", "class:", ",", "asString", "hr", "style:", "ifTrue:ifFalse:", "and:", "=", "difficulty", "game", "*", "to:"],
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
@@ -1747,6 +2084,310 @@ messageSends: ["class:", "div", "with:", "renderLinesOn:", "renderKeyOn:", "rend
 referencedClasses: []
 }),
 smalltalk.SheetWidget);
+
+
+
+smalltalk.addClass('TimerWidget', smalltalk.Widget, ['secondsPerNote', 'currentSecondsPerNote', 'globalSeconds', 'remainingGlobalSeconds', 'currentSecondsPerNoteSpan', 'remainingGlobalSecondsSpan', 'isRunning', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_currentSecondsPerNote",
+smalltalk.method({
+selector: "currentSecondsPerNote",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@currentSecondsPerNote"];
+return $1;
+},
+args: [],
+source: "currentSecondsPerNote\x0a\x09^ currentSecondsPerNote",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_currentSecondsPerNote_",
+smalltalk.method({
+selector: "currentSecondsPerNote:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@currentSecondsPerNote"]=anInteger;
+return self},
+args: ["anInteger"],
+source: "currentSecondsPerNote: anInteger\x0a      currentSecondsPerNote := anInteger",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_game",
+smalltalk.method({
+selector: "game",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@game"];
+return $1;
+},
+args: [],
+source: "game\x0a\x09^ game",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_game_",
+smalltalk.method({
+selector: "game:",
+category: 'accessing',
+fn: function (aGameWidget){
+var self=this;
+self["@game"]=aGameWidget;
+return self},
+args: ["aGameWidget"],
+source: "game: aGameWidget\x0a\x09game := aGameWidget",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_globalSeconds",
+smalltalk.method({
+selector: "globalSeconds",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@globalSeconds"];
+return $1;
+},
+args: [],
+source: "globalSeconds\x0a      ^ globalSeconds",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_globalSeconds_",
+smalltalk.method({
+selector: "globalSeconds:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@globalSeconds"]=anInteger;
+smalltalk.send(self,"_remainingGlobalSeconds_",[anInteger]);
+return self},
+args: ["anInteger"],
+source: "globalSeconds: anInteger\x0a      globalSeconds := anInteger.\x0a      self remainingGlobalSeconds: anInteger",
+messageSends: ["remainingGlobalSeconds:"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_isRunning",
+smalltalk.method({
+selector: "isRunning",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@isRunning"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@isRunning"]=true;
+$1=self["@isRunning"];
+} else {
+$1=$2;
+};
+return $1;
+},
+args: [],
+source: "isRunning\x0a\x09^ isRunning ifNil: [ isRunning := true ]",
+messageSends: ["ifNil:"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_ranOutOfGlobalTime",
+smalltalk.method({
+selector: "ranOutOfGlobalTime",
+category: 'actions',
+fn: function (){
+var self=this;
+self["@isRunning"]=false;
+smalltalk.send(smalltalk.send(self,"_game",[]),"_end",[]);
+return self},
+args: [],
+source: "ranOutOfGlobalTime\x0a\x09isRunning := false.\x0a    self game end.",
+messageSends: ["end", "game"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_remainingGlobalSeconds",
+smalltalk.method({
+selector: "remainingGlobalSeconds",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@remainingGlobalSeconds"];
+return $1;
+},
+args: [],
+source: "remainingGlobalSeconds\x0a\x09^ remainingGlobalSeconds",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_remainingGlobalSeconds_",
+smalltalk.method({
+selector: "remainingGlobalSeconds:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@remainingGlobalSeconds"]=anInteger;
+return self},
+args: ["anInteger"],
+source: "remainingGlobalSeconds: anInteger\x0a\x09remainingGlobalSeconds := anInteger",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+category: 'rendering',
+fn: function (html){
+var self=this;
+self["@currentSecondsPerNoteSpan"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["remaining-note-seconds"]);
+self["@remainingGlobalSecondsSpan"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["remaining-global-seconds"]);
+smalltalk.send(self,"_updateLoop",[]);
+return self},
+args: ["html"],
+source: "renderOn: html\x0a    currentSecondsPerNoteSpan := html span\x0a    \x09class: 'remaining-note-seconds'.\x0a\x09remainingGlobalSecondsSpan := html span\x0a    \x09class: 'remaining-global-seconds'.\x0a\x09self updateLoop.",
+messageSends: ["class:", "span", "updateLoop"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_reset",
+smalltalk.method({
+selector: "reset",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(self,"_secondsPerNote",[])]);
+return self},
+args: [],
+source: "reset\x0a\x09self currentSecondsPerNote: self secondsPerNote",
+messageSends: ["currentSecondsPerNote:", "secondsPerNote"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_secondsPerNote",
+smalltalk.method({
+selector: "secondsPerNote",
+category: 'accessing',
+fn: function (){
+var self=this;
+var $1;
+$1=self["@secondsPerNote"];
+return $1;
+},
+args: [],
+source: "secondsPerNote\x0a\x09^ secondsPerNote",
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_secondsPerNote_",
+smalltalk.method({
+selector: "secondsPerNote:",
+category: 'accessing',
+fn: function (anInteger){
+var self=this;
+self["@secondsPerNote"]=anInteger;
+smalltalk.send(self,"_currentSecondsPerNote_",[anInteger]);
+return self},
+args: ["anInteger"],
+source: "secondsPerNote: anInteger\x0a      secondsPerNote := anInteger.\x0a      self currentSecondsPerNote: anInteger",
+messageSends: ["currentSecondsPerNote:"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_updateLoop",
+smalltalk.method({
+selector: "updateLoop",
+category: 'updating',
+fn: function (){
+var self=this;
+var $1,$4,$5,$6,$7,$3,$2;
+$1=smalltalk.send(self,"_isRunning",[]);
+$2=(function(){
+$3=(function(){
+$4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
+if(! smalltalk.assert($4)){
+smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
+};
+$5=smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__lt_eq",[(0)]);
+if(smalltalk.assert($5)){
+smalltalk.send(self,"_ranOutOfGlobalTime",[]);
+} else {
+smalltalk.send(self,"_remainingGlobalSeconds_",[smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__minus",[(1)])]);
+};
+$6=self;
+smalltalk.send($6,"_updateSpans",[]);
+$7=smalltalk.send($6,"_updateLoop",[]);
+return $7;
+});
+return smalltalk.send($3,"_valueWithTimeout_",[(1000)]);
+});
+smalltalk.send($1,"_ifTrue_",[$2]);
+return self},
+args: [],
+source: "updateLoop\x0a\x09self isRunning \x0a    \x09ifTrue: [\x0a\x09\x09\x09[ self currentSecondsPerNote <= 0 \x0a        \x09\x09ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].\x0a            self remainingGlobalSeconds <= 0\x0a            \x09ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]\x0a              \x09ifTrue: [ self ranOutOfGlobalTime ].\x0a    \x09\x09self\x0a    \x09\x09\x09updateSpans;\x0a\x09\x09\x09\x09updateLoop ]\x0a    \x09\x09\x09\x09valueWithTimeout: 1000 ]",
+messageSends: ["ifTrue:", "valueWithTimeout:", "ifFalse:", "currentSecondsPerNote:", "-", "currentSecondsPerNote", "<=", "ifFalse:ifTrue:", "remainingGlobalSeconds:", "remainingGlobalSeconds", "ranOutOfGlobalTime", "updateSpans", "updateLoop", "isRunning"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_updateSpans",
+smalltalk.method({
+selector: "updateSpans",
+category: 'updating',
+fn: function (){
+var self=this;
+smalltalk.send(self["@currentSecondsPerNoteSpan"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"_asString",[]),"__comma",[" segons restants"])]);
+smalltalk.send(self["@remainingGlobalSecondsSpan"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"_asString",[]),"__comma",[" / "]),"__comma",[smalltalk.send(self,"_globalSeconds",[])])]);
+return self},
+args: [],
+source: "updateSpans\x0a\x09currentSecondsPerNoteSpan contents: self currentSecondsPerNote asString, ' segons restants'.\x0a    remainingGlobalSecondsSpan contents: self remainingGlobalSeconds asString , ' / ' , self globalSeconds",
+messageSends: ["contents:", ",", "asString", "currentSecondsPerNote", "globalSeconds", "remainingGlobalSeconds"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
 
 
 

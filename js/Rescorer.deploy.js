@@ -177,7 +177,7 @@ smalltalk.FaceWidget);
 
 
 
-smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'errorAudio', 'faceWidget'], 'Rescorer');
+smalltalk.addClass('GameWidget', smalltalk.Widget, ['wrapper', 'currentStage', 'sheetWidget', 'bubbleWidget', 'noteButtonsWidget', 'faceWidget', 'timerWidget', 'scoreWidget', 'errorAudio', 'difficulty', 'failedFlag'], 'Rescorer');
 smalltalk.addMethod(
 "_bubbleWidget",
 smalltalk.method({
@@ -225,7 +225,23 @@ smalltalk.send(smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_currentNo
 smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beHappy",[]);
 smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_nextNote",[]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_reset",[]);
+smalltalk.send(smalltalk.send(self,"_scoreWidget",[]),"_addScore_",[smalltalk.send(self,"_currentNoteScore",[])]);
+smalltalk.send(self,"_failedFlag_",[(1)]);
 return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_currentNoteScore",
+smalltalk.method({
+selector: "currentNoteScore",
+fn: function (){
+var self=this;
+var $1;
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_currentSecondsPerNote",[]),"__star",[smalltalk.send(self,"_difficulty",[])]),"__star",[smalltalk.send(self,"_failedFlag",[])]);
+return $1;
+}
 }),
 smalltalk.GameWidget);
 
@@ -249,6 +265,42 @@ return $1;
 smalltalk.GameWidget);
 
 smalltalk.addMethod(
+"_difficulty",
+smalltalk.method({
+selector: "difficulty",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@difficulty"];
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_difficulty_",
+smalltalk.method({
+selector: "difficulty:",
+fn: function (anInteger){
+var self=this;
+self["@difficulty"]=anInteger;
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_end",
+smalltalk.method({
+selector: "end",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_nextStage",[]);
+smalltalk.send(smalltalk.send(self,"_faceWidget",[]),"_beHappy",[]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
 "_faceWidget",
 smalltalk.method({
 selector: "faceWidget",
@@ -264,6 +316,66 @@ $1=$2;
 };
 return $1;
 }
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_failedFlag",
+smalltalk.method({
+selector: "failedFlag",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@failedFlag"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@failedFlag"]=(1);
+$1=self["@failedFlag"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_failedFlag_",
+smalltalk.method({
+selector: "failedFlag:",
+fn: function (anInteger){
+var self=this;
+self["@failedFlag"]=anInteger;
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_globalScore",
+smalltalk.method({
+selector: "globalScore",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@globalScore"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@globalScore"]=(0);
+$1=self["@globalScore"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_globalScore_",
+smalltalk.method({
+selector: "globalScore:",
+fn: function (anInteger){
+var self=this;
+self["@globalScore"]=anInteger;
+return self}
 }),
 smalltalk.GameWidget);
 
@@ -363,7 +475,7 @@ smalltalk.method({
 selector: "renderCurrentStageOn:",
 fn: function (html){
 var self=this;
-var $1,$2,$3,$4;
+var $1,$2,$3,$4,$5,$6;
 $1=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("difficultySelection")]);
 if(smalltalk.assert($1)){
 smalltalk.send(self,"_renderDifficultySelectionStageOn_",[html]);
@@ -372,13 +484,21 @@ $2=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symb
 if(smalltalk.assert($2)){
 smalltalk.send(self,"_renderSpeedSelectionStageOn_",[html]);
 };
-$3=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("keySelection")]);
+$3=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("timeSelection")]);
 if(smalltalk.assert($3)){
+smalltalk.send(self,"_renderGameTimeSelectionStageOn_",[html]);
+};
+$4=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("keySelection")]);
+if(smalltalk.assert($4)){
 smalltalk.send(self,"_renderKeySelectionStageOn_",[html]);
 };
-$4=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("game")]);
-if(smalltalk.assert($4)){
+$5=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("game")]);
+if(smalltalk.assert($5)){
 smalltalk.send(self,"_renderGameStageOn_",[html]);
+};
+$6=smalltalk.send(smalltalk.send(self,"_currentStage",[]),"__eq",[smalltalk.symbolFor("end")]);
+if(smalltalk.assert($6)){
+smalltalk.send(self,"_renderEndStageOn_",[html]);
 };
 return self}
 }),
@@ -395,22 +515,40 @@ var stage;
 stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
 $1=smalltalk.send(stage,"_buttons",[]);
 smalltalk.send($1,"_at_put_",["Principiant",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(1)]);
+smalltalk.send(self,"_difficulty_",[(1)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Iniciat",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(2)]);
+smalltalk.send(self,"_difficulty_",[(2)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Expert",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(3)]);
+smalltalk.send(self,"_difficulty_",[(3)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 $2=smalltalk.send($1,"_at_put_",["Virtuós",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_difficulty_",[(4)]);
+smalltalk.send(self,"_difficulty_",[(4)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["A quin nivell de dificultat vols jugar?"]);
+smalltalk.send(html,"_with_",[stage]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderEndStageOn_",
+smalltalk.method({
+selector: "renderEndStageOn:",
+fn: function (html){
+var self=this;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+smalltalk.send(smalltalk.send(stage,"_buttons",[]),"_at_put_",["Nova partida",(function(){
+smalltalk.send(self,"_resetGame",[]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",[smalltalk.send(smalltalk.send("S'ha acabat el temps! La teva puntuació final és de ","__comma",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_scoreWidget",[]),"_globalScore",[]),"_asString",[])]),"__comma",[" punts."])]);
 smalltalk.send(html,"_with_",[stage]);
 return self}
 }),
@@ -437,17 +575,68 @@ smalltalk.method({
 selector: "renderGameStageOn:",
 fn: function (html){
 var self=this;
-var $1,$2,$3,$4;
+var $1,$2,$3,$4,$5,$6,$7,$8;
 $1=smalltalk.send(html,"_div",[]);
 smalltalk.send($1,"_class_",["sheet-container"]);
 $2=smalltalk.send($1,"_with_",[smalltalk.send(self,"_sheetWidget",[])]);
 $3=smalltalk.send(html,"_div",[]);
 smalltalk.send($3,"_class_",["note-buttons-container"]);
 $4=smalltalk.send($3,"_with_",[smalltalk.send(self,"_noteButtonsWidget",[])]);
+$5=smalltalk.send(html,"_div",[]);
+smalltalk.send($5,"_class_",["score"]);
+$6=smalltalk.send($5,"_with_",[smalltalk.send(self,"_scoreWidget",[])]);
+$7=smalltalk.send(html,"_div",[]);
+smalltalk.send($7,"_class_",["timer"]);
+$8=smalltalk.send($7,"_with_",[smalltalk.send(self,"_timerWidget",[])]);
 smalltalk.send(self,"_renderAudioElementsOn_",[html]);
 self["@errorAudio"]=smalltalk.send(smalltalk.send(html,"_div",[]),"_with_",[(function(){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_renderGameTimeSelectionStageOn_",
+smalltalk.method({
+selector: "renderGameTimeSelectionStageOn:",
+fn: function (html){
+var self=this;
+var $1,$3,$5,$8,$7,$6,$4,$2;
+var stage;
+stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
+$1=smalltalk.send(stage,"_buttons",[]);
+smalltalk.send($1,"_at_put_",["10 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((10),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["5 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((5),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+smalltalk.send($1,"_at_put_",["2 minuts",(function(){
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_globalSeconds_",[smalltalk.send((2),"__star",[(60)])]);
+return smalltalk.send(self,"_nextStage",[]);
+})]);
+$3=$1;
+$4=(function(){
+var time;
+time=smalltalk.send(smalltalk.send(window,"_prompt_",["Quants minuts?"]),"_asNumber",[]);
+time;
+$5=smalltalk.send(self,"_timerWidget",[]);
+$8=smalltalk.send(time,"__gt",[(0)]);
+if(smalltalk.assert($8)){
+$7=time;
+} else {
+$7=(5);
+};
+$6=smalltalk.send($7,"__star",[(60)]);
+smalltalk.send($5,"_globalSeconds_",[$6]);
+return smalltalk.send(self,"_nextStage",[]);
+});
+$2=smalltalk.send($3,"_at_put_",["custom",$4]);
+smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["Quants minuts vols que duri la partida?"]);
+smalltalk.send(html,"_with_",[stage]);
 return self}
 }),
 smalltalk.GameWidget);
@@ -504,35 +693,84 @@ var stage;
 stage=smalltalk.send((smalltalk.OptionSelectionWidget || OptionSelectionWidget),"_new",[]);
 $1=smalltalk.send(stage,"_buttons",[]);
 smalltalk.send($1,"_at_put_",["Adagio",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(70)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(10)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Andante",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(100)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(6)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Allegro",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(130)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(3)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send($1,"_at_put_",["Presto",(function(){
-smalltalk.send(smalltalk.send(self,"_sheetWidget",[]),"_bpm_",[(170)]);
+smalltalk.send(smalltalk.send(self,"_timerWidget",[]),"_secondsPerNote_",[(1)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 $3=$1;
 $4=(function(){
-$5=smalltalk.send(self,"_sheetWidget",[]);
-$7=smalltalk.send(smalltalk.send(smalltalk.send(window,"_prompt_",["BPM?"]),"_asNumber",[]),"__gt",[(0)]);
-if(! smalltalk.assert($7)){
+var time;
+time=smalltalk.send(smalltalk.send(window,"_prompt_",["Segons per nota?"]),"_asNumber",[]);
+time;
+$5=smalltalk.send(self,"_timerWidget",[]);
+$7=smalltalk.send(time,"__gt",[(0)]);
+if(smalltalk.assert($7)){
+$6=time;
+} else {
 $6=(70);
 };
-smalltalk.send($5,"_bpm_",[$6]);
+smalltalk.send($5,"_secondsPerNote_",[$6]);
 return smalltalk.send(self,"_nextStage",[]);
 });
 $2=smalltalk.send($3,"_at_put_",["Custom",$4]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["I a quin tempo?"]);
 smalltalk.send(html,"_with_",[stage]);
 return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_resetCurrentNoteScore",
+smalltalk.method({
+selector: "resetCurrentNoteScore",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_currentNoteScore_",[(0)]);
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_resetGame",
+smalltalk.method({
+selector: "resetGame",
+fn: function (){
+var self=this;
+self["@sheetWidget"]=nil;
+self["@timerWidget"]=nil;
+self["@scoreWidget"]=nil;
+self["@difficulty"]=nil;
+return self}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_scoreWidget",
+smalltalk.method({
+selector: "scoreWidget",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@scoreWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@scoreWidget"]=smalltalk.send((smalltalk.ScoreWidget || ScoreWidget),"_new",[]);
+$1=self["@scoreWidget"];
+} else {
+$1=$2;
+};
+return $1;
+}
 }),
 smalltalk.GameWidget);
 
@@ -561,7 +799,26 @@ smalltalk.method({
 selector: "stageNames",
 fn: function (){
 var self=this;
-return [smalltalk.symbolFor("difficultySelection"), smalltalk.symbolFor("speedSelection"), smalltalk.symbolFor("keySelection"), smalltalk.symbolFor("game")];
+return [smalltalk.symbolFor("difficultySelection"), smalltalk.symbolFor("speedSelection"), smalltalk.symbolFor("timeSelection"), smalltalk.symbolFor("keySelection"), smalltalk.symbolFor("game"), smalltalk.symbolFor("end")];
+}
+}),
+smalltalk.GameWidget);
+
+smalltalk.addMethod(
+"_timerWidget",
+smalltalk.method({
+selector: "timerWidget",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@timerWidget"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@timerWidget"]=smalltalk.send(smalltalk.send((smalltalk.TimerWidget || TimerWidget),"_new",[]),"_game_",[self]);
+$1=self["@timerWidget"];
+} else {
+$1=$2;
+};
+return $1;
 }
 }),
 smalltalk.GameWidget);
@@ -591,6 +848,7 @@ smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_beSad",[]);
 smalltalk.send(self["@errorAudio"],"_contents_",[(function(html){
 return smalltalk.send(self,"_renderErrorAudioOn_",[html]);
 })]);
+smalltalk.send(self,"_failedFlag_",[(0)]);
 return self}
 }),
 smalltalk.GameWidget);
@@ -1077,31 +1335,75 @@ smalltalk.OptionSelectionWidget);
 
 
 
-smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'bpm', 'difficulty', 'noteDiv', 'currentNote', 'game', 'notePositions'], 'Rescorer');
+smalltalk.addClass('ScoreWidget', smalltalk.Widget, ['globalScore', 'span'], 'Rescorer');
 smalltalk.addMethod(
-"_bpm",
+"_addScore_",
 smalltalk.method({
-selector: "bpm",
+selector: "addScore:",
+fn: function (anInteger){
+var self=this;
+smalltalk.send(self,"_globalScore_",[smalltalk.send(smalltalk.send(self,"_globalScore",[]),"__plus",[anInteger])]);
+smalltalk.send(self,"_updateSpan",[]);
+return self}
+}),
+smalltalk.ScoreWidget);
+
+smalltalk.addMethod(
+"_globalScore",
+smalltalk.method({
+selector: "globalScore",
 fn: function (){
 var self=this;
-var $1;
-$1=self["@bpm"];
+var $2,$1;
+$2=self["@globalScore"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@globalScore"]=(0);
+$1=self["@globalScore"];
+} else {
+$1=$2;
+};
 return $1;
 }
 }),
-smalltalk.SheetWidget);
+smalltalk.ScoreWidget);
 
 smalltalk.addMethod(
-"_bpm_",
+"_globalScore_",
 smalltalk.method({
-selector: "bpm:",
+selector: "globalScore:",
 fn: function (anInteger){
 var self=this;
-self["@bpm"]=anInteger;
+self["@globalScore"]=anInteger;
 return self}
 }),
-smalltalk.SheetWidget);
+smalltalk.ScoreWidget);
 
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+fn: function (html){
+var self=this;
+self["@span"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["score"]);
+smalltalk.send(self,"_updateSpan",[]);
+return self}
+}),
+smalltalk.ScoreWidget);
+
+smalltalk.addMethod(
+"_updateSpan",
+smalltalk.method({
+selector: "updateSpan",
+fn: function (){
+var self=this;
+smalltalk.send(self["@span"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_globalScore",[]),"_asString",[]),"__comma",[" punts"])]);
+return self}
+}),
+smalltalk.ScoreWidget);
+
+
+
+smalltalk.addClass('SheetWidget', smalltalk.Widget, ['lines', 'keyImg', 'sheetDiv', 'keyName', 'difficulty', 'noteDiv', 'currentNote', 'game', 'notePositions'], 'Rescorer');
 smalltalk.addMethod(
 "_currentNote",
 smalltalk.method({
@@ -1118,30 +1420,6 @@ fn: function () {
     }
     return $1;
 }
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_difficulty",
-smalltalk.method({
-selector: "difficulty",
-fn: function (){
-var self=this;
-var $1;
-$1=self["@difficulty"];
-return $1;
-}
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_difficulty_",
-smalltalk.method({
-selector: "difficulty:",
-fn: function (anInteger){
-var self=this;
-self["@difficulty"]=anInteger;
-return self}
 }),
 smalltalk.SheetWidget);
 
@@ -1243,23 +1521,12 @@ smalltalk.send($3,"_at_put_",[(2),smalltalk.send((1),"_to_",[(13)])]);
 smalltalk.send($3,"_at_put_",[(3),smalltalk.send((1),"_to_",[(13)])]);
 smalltalk.send($3,"_at_put_",[(4),smalltalk.send((1),"_to_",[(15)])]);
 $4=smalltalk.send($3,"_yourself",[]);
-self["@notePositions"]=smalltalk.send($4,"_at_",[smalltalk.send(self,"_difficulty",[])]);
+self["@notePositions"]=smalltalk.send($4,"_at_",[smalltalk.send(smalltalk.send(self,"_game",[]),"_difficulty",[])]);
 $1=self["@notePositions"];
 } else {
 $1=$2;
 };
 return $1;
-}
-}),
-smalltalk.SheetWidget);
-
-smalltalk.addMethod(
-"_play",
-smalltalk.method({
-selector: "play",
-fn: function () {
-    var self = this;
-    return self;
 }
 }),
 smalltalk.SheetWidget);
@@ -1294,7 +1561,7 @@ smalltalk.send($3,"_class_",[smalltalk.send("line i","__comma",[smalltalk.send(i
 $5=$3;
 $7=smalltalk.send(smalltalk.send("bottom: ","__comma",[smalltalk.send(smalltalk.send(index,"__star",[(12.5)]),"_asString",[])]),"__comma",["%;"]);
 $9=smalltalk.send(smalltalk.send(index,"__eq",[(4)]),"_and_",[(function(){
-return smalltalk.send(self["@difficulty"],"__eq",[(2)]);
+return smalltalk.send(smalltalk.send(smalltalk.send(self,"_game",[]),"_difficulty",[]),"__eq",[(2)]);
 })]);
 if(smalltalk.assert($9)){
 $8="background-color: red;";
@@ -1347,6 +1614,230 @@ return self["@noteDiv"];
 return self}
 }),
 smalltalk.SheetWidget);
+
+
+
+smalltalk.addClass('TimerWidget', smalltalk.Widget, ['secondsPerNote', 'currentSecondsPerNote', 'globalSeconds', 'remainingGlobalSeconds', 'currentSecondsPerNoteSpan', 'remainingGlobalSecondsSpan', 'isRunning', 'game'], 'Rescorer');
+smalltalk.addMethod(
+"_currentSecondsPerNote",
+smalltalk.method({
+selector: "currentSecondsPerNote",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@currentSecondsPerNote"];
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_currentSecondsPerNote_",
+smalltalk.method({
+selector: "currentSecondsPerNote:",
+fn: function (anInteger){
+var self=this;
+self["@currentSecondsPerNote"]=anInteger;
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_game",
+smalltalk.method({
+selector: "game",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@game"];
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_game_",
+smalltalk.method({
+selector: "game:",
+fn: function (aGameWidget){
+var self=this;
+self["@game"]=aGameWidget;
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_globalSeconds",
+smalltalk.method({
+selector: "globalSeconds",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@globalSeconds"];
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_globalSeconds_",
+smalltalk.method({
+selector: "globalSeconds:",
+fn: function (anInteger){
+var self=this;
+self["@globalSeconds"]=anInteger;
+smalltalk.send(self,"_remainingGlobalSeconds_",[anInteger]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_isRunning",
+smalltalk.method({
+selector: "isRunning",
+fn: function (){
+var self=this;
+var $2,$1;
+$2=self["@isRunning"];
+if(($receiver = $2) == nil || $receiver == undefined){
+self["@isRunning"]=true;
+$1=self["@isRunning"];
+} else {
+$1=$2;
+};
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_ranOutOfGlobalTime",
+smalltalk.method({
+selector: "ranOutOfGlobalTime",
+fn: function (){
+var self=this;
+self["@isRunning"]=false;
+smalltalk.send(smalltalk.send(self,"_game",[]),"_end",[]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_remainingGlobalSeconds",
+smalltalk.method({
+selector: "remainingGlobalSeconds",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@remainingGlobalSeconds"];
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_remainingGlobalSeconds_",
+smalltalk.method({
+selector: "remainingGlobalSeconds:",
+fn: function (anInteger){
+var self=this;
+self["@remainingGlobalSeconds"]=anInteger;
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_renderOn_",
+smalltalk.method({
+selector: "renderOn:",
+fn: function (html){
+var self=this;
+self["@currentSecondsPerNoteSpan"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["remaining-note-seconds"]);
+self["@remainingGlobalSecondsSpan"]=smalltalk.send(smalltalk.send(html,"_span",[]),"_class_",["remaining-global-seconds"]);
+smalltalk.send(self,"_updateLoop",[]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_reset",
+smalltalk.method({
+selector: "reset",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(self,"_secondsPerNote",[])]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_secondsPerNote",
+smalltalk.method({
+selector: "secondsPerNote",
+fn: function (){
+var self=this;
+var $1;
+$1=self["@secondsPerNote"];
+return $1;
+}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_secondsPerNote_",
+smalltalk.method({
+selector: "secondsPerNote:",
+fn: function (anInteger){
+var self=this;
+self["@secondsPerNote"]=anInteger;
+smalltalk.send(self,"_currentSecondsPerNote_",[anInteger]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_updateLoop",
+smalltalk.method({
+selector: "updateLoop",
+fn: function (){
+var self=this;
+var $1,$4,$5,$6,$7,$3,$2;
+$1=smalltalk.send(self,"_isRunning",[]);
+$2=(function(){
+$3=(function(){
+$4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
+if(! smalltalk.assert($4)){
+smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
+};
+$5=smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__lt_eq",[(0)]);
+if(smalltalk.assert($5)){
+smalltalk.send(self,"_ranOutOfGlobalTime",[]);
+} else {
+smalltalk.send(self,"_remainingGlobalSeconds_",[smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__minus",[(1)])]);
+};
+$6=self;
+smalltalk.send($6,"_updateSpans",[]);
+$7=smalltalk.send($6,"_updateLoop",[]);
+return $7;
+});
+return smalltalk.send($3,"_valueWithTimeout_",[(1000)]);
+});
+smalltalk.send($1,"_ifTrue_",[$2]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
+"_updateSpans",
+smalltalk.method({
+selector: "updateSpans",
+fn: function (){
+var self=this;
+smalltalk.send(self["@currentSecondsPerNoteSpan"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"_asString",[]),"__comma",[" segons restants"])]);
+smalltalk.send(self["@remainingGlobalSecondsSpan"],"_contents_",[smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"_asString",[]),"__comma",[" / "]),"__comma",[smalltalk.send(self,"_globalSeconds",[])])]);
+return self}
+}),
+smalltalk.TimerWidget);
 
 
 

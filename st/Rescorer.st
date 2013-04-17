@@ -144,7 +144,7 @@ updateFace
 ! !
 
 Widget subclass: #GameWidget
-	instanceVariableNames: 'wrapper currentStage sheetWidget bubbleWidget noteButtonsWidget errorAudio faceWidget'
+	instanceVariableNames: 'wrapper currentStage sheetWidget bubbleWidget noteButtonsWidget faceWidget timerWidget scoreWidget errorAudio difficulty failedFlag'
 	package: 'Rescorer'!
 
 !GameWidget methodsFor: 'accessing'!
@@ -153,16 +153,48 @@ bubbleWidget
 	^ bubbleWidget ifNil: [ bubbleWidget := BubbleWidget new ]
 !
 
+currentNoteScore
+	^ self timerWidget currentSecondsPerNote * self difficulty * self failedFlag
+!
+
 currentStage
 	^ currentStage ifNil: [ currentStage := #difficultySelection ]
+!
+
+difficulty
+	^ difficulty
+!
+
+difficulty: anInteger
+	difficulty := anInteger
 !
 
 faceWidget
 	^ faceWidget ifNil: [ faceWidget := FaceWidget new ]
 !
 
+failedFlag
+	^ failedFlag ifNil: [ failedFlag := 1 ]
+!
+
+failedFlag: anInteger
+	failedFlag := anInteger
+!
+
+globalScore
+	^ globalScore ifNil: [ globalScore := 0 ]
+!
+
+globalScore: anInteger
+	globalScore := anInteger
+!
+
 noteButtonsWidget
 	^ noteButtonsWidget ifNil: [ noteButtonsWidget := NoteButtonsWidget new game: self ]
+!
+
+scoreWidget
+	^ scoreWidget ifNil: [ scoreWidget := ScoreWidget new ]
 !
 
 sheetWidget
@@ -170,7 +202,11 @@ sheetWidget
 !
 
 stageNames
-	^ #(#difficultySelection #speedSelection #keySelection #game).
+	^ #(#difficultySelection #speedSelection #timeSelection #keySelection #game #end).
+!
+
+timerWidget
+	^ timerWidget ifNil: [ timerWidget := TimerWidget new game: self ]
 ! !
 
 !GameWidget methodsFor: 'actions'!
@@ -185,7 +221,15 @@ correctAnswerAction
 	self sheetWidget currentNote play.
     self faceWidget beHappy.
     self bubbleWidget beHappy.
-	self sheetWidget nextNote
+	self sheetWidget nextNote.
+    self timerWidget reset.
+    self scoreWidget addScore: self currentNoteScore.
+    self failedFlag: 1
+!
+
+end
+	self nextStage.
+	self faceWidget beHappy.
 !
 
 nextStage
@@ -197,11 +241,23 @@ playErrorSound
 	< $('audio.error')[0].play() >
 !
 
+resetCurrentNoteScore
+	self currentNoteScore: 0
+!
+
+resetGame
+	sheetWidget := nil.
+    timerWidget := nil.
+    scoreWidget := nil.
+    difficulty := nil.
+!
+
 wrongAnswerAction
 	self playErrorSound.
     self faceWidget beSad.
     self bubbleWidget beSad.
-    errorAudio contents: [ :html | self renderErrorAudioOn: html ]
+    errorAudio contents: [ :html | self renderErrorAudioOn: html ].
+    self failedFlag: 0
 ! !
 
 !GameWidget methodsFor: 'rendering'!
@@ -238,8 +294,10 @@ renderOn: html
 renderCurrentStageOn: html
 	self currentStage = #difficultySelection ifTrue: [ self renderDifficultySelectionStageOn: html ].
 	self currentStage = #speedSelection ifTrue: [ self renderSpeedSelectionStageOn: html ].
+    self currentStage = #timeSelection ifTrue: [ self renderGameTimeSelectionStageOn: html ].
 	self currentStage = #keySelection ifTrue: [ self renderKeySelectionStageOn: html ].
 	self currentStage = #game ifTrue: [ self renderGameStageOn: html ].
+    self currentStage = #end ifTrue: [ self renderEndStageOn: html ].
 !
 
 renderDifficultySelectionStageOn: html
@@ -248,22 +306,34 @@ renderDifficultySelectionStageOn: html
 	stage buttons
         	at: 'Principiant'
             	put: [
-                	self sheetWidget difficulty: 1.
+                	self difficulty: 1.
             		self nextStage ];
 			at: 'Iniciat'
             	put: [
-                	self sheetWidget difficulty: 2.
+                	self difficulty: 2.
                     self nextStage ];
 			at: 'Expert'
             	put: [
-                	self sheetWidget difficulty: 3.
+                	self difficulty: 3.
                     self nextStage ];
 			at: 'Virtuós'
             	put: [
-                	self sheetWidget difficulty: 4.
+                	self difficulty: 4.
                     self nextStage ].
 	self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.
 	html with: stage.
+!
+
+renderEndStageOn: html
+	| stage |
+	stage := OptionSelectionWidget new.
+	stage buttons 
+        	at: 'Nova partida' 
+            	put: [
+                	self resetGame. 
+            		self nextStage ].
+	self bubbleWidget text: 'S''ha acabat el temps!! La teva puntuació final és de ' , self scoreWidget globalScore asString , ' punts.'.
+    html with: stage.
 !
 
 renderGameStageOn: html
@@ -273,8 +343,40 @@ renderGameStageOn: html
 	html div 
     	class: 'note-buttons-container';
     	with: self noteButtonsWidget.
+	html div
+    	class: 'score';
+        with: self scoreWidget.
+	html div
+    	class: 'timer';
+        with: self timerWidget.
     self renderAudioElementsOn: html.
 	errorAudio := html div with: [ self renderErrorAudioOn: html ]
+!
+
+renderGameTimeSelectionStageOn: html
+	| stage |
+	stage := OptionSelectionWidget new.
+	stage buttons 
+        	at: '10 minuts' 
+            	put: [
+                	self timerWidget globalSeconds: 10 * 60.
+            		self nextStage ];
+			at: '5 minuts' 
+            	put: [
+                	self timerWidget globalSeconds: 5 * 60.
+            		self nextStage ]; 
+			at: '2 minuts'
+            	put: [ 
+                	self timerWidget globalSeconds: 2 * 60.
+                    self nextStage ];
+			at: 'custom' 
+            	put: [
+                  	| time |
+                    time := (window prompt: 'Quants minuts?') asNumber.
+                	self timerWidget globalSeconds: (time > 0 ifFalse: [ 5 ] ifTrue: [ time ]) * 60.
+            		self nextStage ].
+	self bubbleWidget text: 'Quants minuts vols que duri la partida?'.
+	html with: stage.
 !
 
 renderKeySelectionStageOn: html
@@ -299,23 +401,25 @@ renderSpeedSelectionStageOn: html
 	stage buttons 
         	at: 'Adagio'
             	put: [
-                	self sheetWidget bpm: 70. 
+                	self timerWidget secondsPerNote: 10. 
             		self nextStage ];
 			at: 'Andante'
             	put: [ 
-                	self sheetWidget bpm: 100.
+                	self timerWidget secondsPerNote: 6.
                     self nextStage ];
 			at: 'Allegro'
             	put: [ 
-                	self sheetWidget bpm: 130.
+                	self timerWidget secondsPerNote: 3.
                     self nextStage ];
 			at: 'Presto'
             	put: [ 
-                	self sheetWidget bpm: 170.
+                	self timerWidget secondsPerNote: 1.
                     self nextStage ];
 			at: 'Custom'
             	put: [
-                  	self sheetWidget bpm: ((window prompt: 'BPM?') asNumber > 0 ifFalse: [ 70 ]).
+                  	| time |
+                    time := (window prompt: 'Segons per nota?') asNumber.
+                  	self timerWidget secondsPerNote: (time > 0 ifFalse: [ 70 ] ifTrue: [ time ]).
                     self nextStage ].
 	self bubbleWidget text: 'I a quin tempo?'.
 	html with: stage.
@@ -545,30 +649,48 @@ renderOn: html
         with: [ self renderButtonsOn: html ]
 ! !
 
+Widget subclass: #ScoreWidget
+	instanceVariableNames: 'globalScore span'
+	package: 'Rescorer'!
+
+!ScoreWidget methodsFor: 'actions'!
+
+addScore: anInteger
+	self globalScore: self globalScore + anInteger.
+    self updateSpan
+! !
+
+!ScoreWidget methodsFor: 'rendering'!
+
+globalScore
+	^ globalScore ifNil: [ globalScore := 0 ]
+!
+
+globalScore: anInteger
+	globalScore := anInteger
+!
+
+renderOn: html
+	span := 
+    	html span 
+    		class: 'score'.
+	self updateSpan.
+! !
+
+!ScoreWidget methodsFor: 'updating'!
+
+updateSpan
+	span contents: self globalScore asString , ' punts'
+! !
+
 Widget subclass: #SheetWidget
-	instanceVariableNames: 'lines keyImg sheetDiv keyName bpm difficulty noteDiv currentNote game notePositions'
+	instanceVariableNames: 'lines keyImg sheetDiv keyName difficulty noteDiv currentNote game notePositions'
 	package: 'Rescorer'!
 
 !SheetWidget methodsFor: 'accessing'!
 
-bpm
-	^ bpm
-!
-
-bpm: anInteger
-	bpm := anInteger
-!
-
 currentNote
 	^ currentNote ifNil: [ self nextNote. currentNote ]
-!
-
-difficulty
-	^ difficulty
-!
-
-difficulty: anInteger
-	difficulty := anInteger
 !
 
 game
@@ -585,9 +707,6 @@ keyName
 
 keyName: aSymbol
 	keyName := aSymbol
-!
-
-play
 ! !
 
 !SheetWidget methodsFor: 'actions'!
@@ -608,7 +727,7 @@ notePositions
                 at: 2 put: (1 to: 13);
                 at: 3 put: (1 to: 13);
                 at: 4 put: (1 to: 15);
-				yourself) at: self difficulty ]
+				yourself) at: self game difficulty ]
 ! !
 
 !SheetWidget methodsFor: 'rendering'!
@@ -624,7 +743,7 @@ renderLinesOn: html
 	lines := (1 to: 7) collect: [ :index | 
     	html hr 
         	class: 'line i' , index asString;
-        	style: 'bottom: ' , (index * 12.5) asString , '%;' , ((index = 4 and: [ difficulty = 2 ]) ifTrue: [ 'background-color: red;' ] ifFalse: [ '' ]) ]
+        	style: 'bottom: ' , (index * 12.5) asString , '%;' , ((index = 4 and: [ self game difficulty = 2 ]) ifTrue: [ 'background-color: red;' ] ifFalse: [ '' ]) ]
 !
 
 renderNoteOn: html
@@ -642,5 +761,99 @@ renderOn: html
 				renderLinesOn: html;
                 renderKeyOn: html.
 	noteDiv := html div with: [ self renderNoteOn: html ]]
+! !
+
+Widget subclass: #TimerWidget
+	instanceVariableNames: 'secondsPerNote currentSecondsPerNote globalSeconds remainingGlobalSeconds currentSecondsPerNoteSpan remainingGlobalSecondsSpan isRunning game'
+	package: 'Rescorer'!
+
+!TimerWidget methodsFor: 'accessing'!
+
+currentSecondsPerNote
+	^ currentSecondsPerNote
+!
+
+currentSecondsPerNote: anInteger
+      currentSecondsPerNote := anInteger
+!
+
+game
+	^ game
+!
+
+game: aGameWidget
+	game := aGameWidget
+!
+
+globalSeconds
+      ^ globalSeconds
+!
+
+globalSeconds: anInteger
+      globalSeconds := anInteger.
+      self remainingGlobalSeconds: anInteger
+!
+
+isRunning
+	^ isRunning ifNil: [ isRunning := true ]
+!
+
+remainingGlobalSeconds
+	^ remainingGlobalSeconds
+!
+
+remainingGlobalSeconds: anInteger
+	remainingGlobalSeconds := anInteger
+!
+
+secondsPerNote
+	^ secondsPerNote
+!
+
+secondsPerNote: anInteger
+      secondsPerNote := anInteger.
+      self currentSecondsPerNote: anInteger
+! !
+
+!TimerWidget methodsFor: 'actions'!
+
+ranOutOfGlobalTime
+	isRunning := false.
+    self game end.
+!
+
+reset
+	self currentSecondsPerNote: self secondsPerNote
+! !
+
+!TimerWidget methodsFor: 'rendering'!
+
+renderOn: html
+    currentSecondsPerNoteSpan := html span
+    	class: 'remaining-note-seconds'.
+	remainingGlobalSecondsSpan := html span
+    	class: 'remaining-global-seconds'.
+	self updateLoop.
+! !
+
+!TimerWidget methodsFor: 'updating'!
+
+updateLoop
+	self isRunning 
+    	ifTrue: [
+			[ self currentSecondsPerNote <= 0 
+        		ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].
+            self remainingGlobalSeconds <= 0
+            	ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]
+              	ifTrue: [ self ranOutOfGlobalTime ].
+    		self
+    			updateSpans;
+				updateLoop ]
+    				valueWithTimeout: 1000 ]
+!
+
+updateSpans
+	currentSecondsPerNoteSpan contents: self currentSecondsPerNote asString, ' segons restants'.
+    remainingGlobalSecondsSpan contents: self remainingGlobalSeconds asString , ' / ' , self globalSeconds
 ! !
 

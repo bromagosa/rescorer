@@ -14,7 +14,7 @@ body {
 
 .bar { background-color: @lightGreen }
 
-.title { color: @darkGreen }
+.title, .score, .timer { color: @darkGreen }
 
 .bubble, .sheet { 
 	background-color: @white; 
@@ -46,7 +46,7 @@ html { font-size: 62.5% }
 
 body { font-family: 'Permanent Marker', cursive }
 
-.title { .font-size(4) }
+.title , .timer, .score { .font-size(4) }
 
 button { 
 	.font-size(2);
@@ -83,6 +83,24 @@ html, body { height: 100% }
 .title { 
 	padding: 5px 10px 0 0;
 	text-align: right;
+}
+
+.score {
+	position: fixed;
+	top: 5px;
+	left: 10px
+}
+
+.remaining-note-seconds {
+	position: fixed;
+	bottom: 5px;
+	left: 10px;
+}
+
+.remaining-global-seconds {
+	position: fixed;
+	bottom: 5px;
+	right: 10px;
 }
 
 .bubble { 

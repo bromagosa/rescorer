@@ -8,7 +8,9 @@ body {
 .bar {
   background-color: #d4ff2a;
 }
-.title {
+.title,
+.score,
+.timer {
   color: #aad400;
 }
 .bubble,
@@ -37,7 +39,9 @@ html {
 body {
   font-family: 'Permanent Marker', cursive;
 }
-.title {
+.title,
+.timer,
+.score {
   font-size: 40px;
   font-size: 4rem;
 }
@@ -87,6 +91,21 @@ body {
 .title {
   padding: 5px 10px 0 0;
   text-align: right;
+}
+.score {
+  position: fixed;
+  top: 5px;
+  left: 10px;
+}
+.remaining-note-seconds {
+  position: fixed;
+  bottom: 5px;
+  left: 10px;
+}
+.remaining-global-seconds {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
 }
 .bubble {
   height: 25%;
