@@ -209,11 +209,11 @@ var self=this;
 var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",["image face"]);
-$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".png"])]);
 self["@faceImg"]=$2;
 return self},
 args: ["html"],
-source: "renderOn: html\x0a\x09faceImg := html img\x0a    \x09class: 'image face';\x0a        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'.",
+source: "renderOn: html\x0a\x09faceImg := html img\x0a    \x09class: 'image face';\x0a        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.png'.",
 messageSends: ["class:", "img", "src:", ",", "asString", "atRandom", "mood"],
 referencedClasses: []
 }),
@@ -226,10 +226,10 @@ selector: "updateFace",
 category: 'updating',
 fn: function (){
 var self=this;
-smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".png"])]);
 return self},
 args: [],
-source: "updateFace\x0a\x09faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'",
+source: "updateFace\x0a\x09faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.png'",
 messageSends: ["src:", ",", "asString", "atRandom", "mood"],
 referencedClasses: []
 }),
@@ -862,16 +862,26 @@ selector: "renderOn:",
 category: 'rendering',
 fn: function (html){
 var self=this;
-var $1,$2;
+var $1,$3,$5,$6,$4,$2;
 $1=smalltalk.send(html,"_div",[]);
 smalltalk.send($1,"_class_",["wrapper"]);
 $2=smalltalk.send($1,"_with_",[(function(){
+$3=smalltalk.send(html,"_div",[]);
+smalltalk.send($3,"_class_",["v-wrapper"]);
+$4=smalltalk.send($3,"_with_",[(function(){
+$5=smalltalk.send(html,"_div",[]);
+smalltalk.send($5,"_class_",["content"]);
+$6=smalltalk.send($5,"_with_",[(function(){
 return smalltalk.send(self,"_renderContentOn_",[html]);
 })]);
-self["@wrapper"]=$2;
+self["@wrapper"]=$6;
+return self["@wrapper"];
+})]);
+return $4;
+})]);
 return self},
 args: ["html"],
-source: "renderOn: html\x0a\x09wrapper := html div \x0a    \x09class: 'wrapper';\x0a        with: [ self renderContentOn: html ]",
+source: "renderOn: html\x0a    html div \x0a    \x09class: 'wrapper';\x0a        with: [ \x0a        \x09html div\x0a            \x09class: 'v-wrapper';\x0a                with: [ wrapper := html div\x0a                    \x09class: 'content';\x0a                        with: [ self renderContentOn: html ]]]",
 messageSends: ["class:", "div", "with:", "renderContentOn:"],
 referencedClasses: []
 }),
@@ -2342,10 +2352,11 @@ selector: "updateLoop",
 category: 'updating',
 fn: function (){
 var self=this;
-var $1,$4,$5,$6,$7,$3,$2;
+var $1,$4,$5,$3,$2;
 $1=smalltalk.send(self,"_isRunning",[]);
 $2=(function(){
 $3=(function(){
+smalltalk.send(self,"_updateSpans",[]);
 $4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
 if(! smalltalk.assert($4)){
 smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
@@ -2356,18 +2367,15 @@ smalltalk.send(self,"_ranOutOfGlobalTime",[]);
 } else {
 smalltalk.send(self,"_remainingGlobalSeconds_",[smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__minus",[(1)])]);
 };
-$6=self;
-smalltalk.send($6,"_updateSpans",[]);
-$7=smalltalk.send($6,"_updateLoop",[]);
-return $7;
+return smalltalk.send(self,"_updateLoop",[]);
 });
 return smalltalk.send($3,"_valueWithTimeout_",[(1000)]);
 });
 smalltalk.send($1,"_ifTrue_",[$2]);
 return self},
 args: [],
-source: "updateLoop\x0a\x09self isRunning \x0a    \x09ifTrue: [\x0a\x09\x09\x09[ self currentSecondsPerNote <= 0 \x0a        \x09\x09ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].\x0a            self remainingGlobalSeconds <= 0\x0a            \x09ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]\x0a              \x09ifTrue: [ self ranOutOfGlobalTime ].\x0a    \x09\x09self\x0a    \x09\x09\x09updateSpans;\x0a\x09\x09\x09\x09updateLoop ]\x0a    \x09\x09\x09\x09valueWithTimeout: 1000 ]",
-messageSends: ["ifTrue:", "valueWithTimeout:", "ifFalse:", "currentSecondsPerNote:", "-", "currentSecondsPerNote", "<=", "ifFalse:ifTrue:", "remainingGlobalSeconds:", "remainingGlobalSeconds", "ranOutOfGlobalTime", "updateSpans", "updateLoop", "isRunning"],
+source: "updateLoop\x0a\x09self isRunning \x0a    \x09ifTrue: [\x0a\x09\x09\x09[ self updateSpans.\x0a            self currentSecondsPerNote <= 0 \x0a        \x09\x09ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].\x0a            self remainingGlobalSeconds <= 0\x0a            \x09ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]\x0a              \x09ifTrue: [ self ranOutOfGlobalTime ].\x0a    \x09\x09self updateLoop ]\x0a    \x09\x09\x09\x09valueWithTimeout: 1000 ]",
+messageSends: ["ifTrue:", "valueWithTimeout:", "updateSpans", "ifFalse:", "currentSecondsPerNote:", "-", "currentSecondsPerNote", "<=", "ifFalse:ifTrue:", "remainingGlobalSeconds:", "remainingGlobalSeconds", "ranOutOfGlobalTime", "updateLoop", "isRunning"],
 referencedClasses: []
 }),
 smalltalk.TimerWidget);

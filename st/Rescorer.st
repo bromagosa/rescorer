@@ -134,13 +134,13 @@ beSad
 renderOn: html
 	faceImg := html img
     	class: 'image face';
-        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'.
+        src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.png'.
 ! !
 
 !FaceWidget methodsFor: 'updating'!
 
 updateFace
-	faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.svg'
+	faceImg src: 'images/face-' , self mood asString , #(1 2 3 4) atRandom asString , '.png'
 ! !
 
 Widget subclass: #GameWidget
@@ -284,9 +284,14 @@ renderErrorAudioOn: html
 !
 
 renderOn: html
-	wrapper := html div 
+    html div 
     	class: 'wrapper';
-        with: [ self renderContentOn: html ]
+        with: [ 
+        	html div
+            	class: 'v-wrapper';
+                with: [ wrapper := html div
+                    	class: 'content';
+                        with: [ self renderContentOn: html ]]]
 ! !
 
 !GameWidget methodsFor: 'rendering - stages'!
@@ -841,14 +846,13 @@ renderOn: html
 updateLoop
 	self isRunning 
     	ifTrue: [
-			[ self currentSecondsPerNote <= 0 
+			[ self updateSpans.
+            self currentSecondsPerNote <= 0 
         		ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].
             self remainingGlobalSeconds <= 0
             	ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]
               	ifTrue: [ self ranOutOfGlobalTime ].
-    		self
-    			updateSpans;
-				updateLoop ]
+    		self updateLoop ]
     				valueWithTimeout: 1000 ]
 !
 

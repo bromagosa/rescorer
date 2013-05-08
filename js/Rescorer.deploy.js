@@ -158,7 +158,7 @@ var self=this;
 var $1,$2;
 $1=smalltalk.send(html,"_img",[]);
 smalltalk.send($1,"_class_",["image face"]);
-$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+$2=smalltalk.send($1,"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".png"])]);
 self["@faceImg"]=$2;
 return self}
 }),
@@ -170,7 +170,7 @@ smalltalk.method({
 selector: "updateFace",
 fn: function (){
 var self=this;
-smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".svg"])]);
+smalltalk.send(self["@faceImg"],"_src_",[smalltalk.send(smalltalk.send(smalltalk.send("images/face-","__comma",[smalltalk.send(smalltalk.send(self,"_mood",[]),"_asString",[])]),"__comma",[smalltalk.send(smalltalk.send([(1), (2), (3), (4)],"_atRandom",[]),"_asString",[])]),"__comma",[".png"])]);
 return self}
 }),
 smalltalk.FaceWidget);
@@ -671,13 +671,23 @@ smalltalk.method({
 selector: "renderOn:",
 fn: function (html){
 var self=this;
-var $1,$2;
+var $1,$3,$5,$6,$4,$2;
 $1=smalltalk.send(html,"_div",[]);
 smalltalk.send($1,"_class_",["wrapper"]);
 $2=smalltalk.send($1,"_with_",[(function(){
+$3=smalltalk.send(html,"_div",[]);
+smalltalk.send($3,"_class_",["v-wrapper"]);
+$4=smalltalk.send($3,"_with_",[(function(){
+$5=smalltalk.send(html,"_div",[]);
+smalltalk.send($5,"_class_",["content"]);
+$6=smalltalk.send($5,"_with_",[(function(){
 return smalltalk.send(self,"_renderContentOn_",[html]);
 })]);
-self["@wrapper"]=$2;
+self["@wrapper"]=$6;
+return self["@wrapper"];
+})]);
+return $4;
+})]);
 return self}
 }),
 smalltalk.GameWidget);
@@ -1801,10 +1811,11 @@ smalltalk.method({
 selector: "updateLoop",
 fn: function (){
 var self=this;
-var $1,$4,$5,$6,$7,$3,$2;
+var $1,$4,$5,$3,$2;
 $1=smalltalk.send(self,"_isRunning",[]);
 $2=(function(){
 $3=(function(){
+smalltalk.send(self,"_updateSpans",[]);
 $4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
 if(! smalltalk.assert($4)){
 smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
@@ -1815,10 +1826,7 @@ smalltalk.send(self,"_ranOutOfGlobalTime",[]);
 } else {
 smalltalk.send(self,"_remainingGlobalSeconds_",[smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__minus",[(1)])]);
 };
-$6=self;
-smalltalk.send($6,"_updateSpans",[]);
-$7=smalltalk.send($6,"_updateLoop",[]);
-return $7;
+return smalltalk.send(self,"_updateLoop",[]);
 });
 return smalltalk.send($3,"_valueWithTimeout_",[(1000)]);
 });
