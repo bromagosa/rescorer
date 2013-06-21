@@ -7,22 +7,48 @@
     <link rel="stylesheet" type="text/css" href='css/rescorer.css' /> 
 	<link href='http://fonts.googleapis.com/css?family=Permanent+Marker' rel='stylesheet' type='text/css'>
     <meta name="author" content="Bernat Romagosa" /> 
+    <script type='text/javascript' src='js/lib/jQuery/jquery-1.8.2.min.js'></script> 
     <script type='text/javascript' src='js/amber.js'></script> 
   </head> 
   <body> 
-	<div class="top bar">
-		<h1 class="title">Rescorer</h1>
+	<div class="loading"><p>Carregant . . .</p></div>
+	<div class="container">
+		<div class="preload">
+			<img src="images/face-happy1.png">	
+			<img src="images/face-happy2.png">	
+			<img src="images/face-happy3.png">	
+			<img src="images/face-happy4.png">	
+			<img src="images/face-happy5.png">	
+			<img src="images/face-sad1.png">	
+			<img src="images/face-sad2.png">	
+			<img src="images/face-sad3.png">	
+			<img src="images/face-sad4.png">	
+			<img src="images/face-sad5.png">	
+			<img src="images/F.svg">	
+			<img src="images/G.svg">	
+			<img src="images/note.svg">	
+			<img src="images/note-reversed.svg">	
+			<img src="images/note-reversed-extra.svg">	
+			<img src="images/note-slashed.svg">	
+			<img src="images/note-slashed-reversed.svg">	
+			<img src="images/note-slashed-reversed-extra.svg">	
+		</div>
+		<div class="top bar">
+			<h1 class="title">Rescorer</h1>
+		</div>
+		<div class="bottom bar"></div>
 	</div>
-	<div class="bottom bar"></div>
-    <script type='text/javascript'>
-		loadAmber({
-    		files: ['Rescorer.js'],
-    		prefix: 'js',
-			ready: 
-				function() {
-					smalltalk.GameWidget._new()._appendToJQuery_(jQuery('body'));
-				}
-			});
+	<script type='text/javascript'>
+			loadAmber({
+				deploy: true,
+    			files: ['Rescorer.js'],
+    			prefix: 'js',
+				ready: 
+					function() {
+						smalltalk.GameWidget._new()._appendToJQuery_(jQuery('body'));
+					}
+				});
+			$('.container').ready(function(){$('.loading').fadeOut(function(){$('.container').fadeIn()})});
 	</script> 
-  </body> 
+	</body> 
 </html> 
