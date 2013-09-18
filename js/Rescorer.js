@@ -2243,6 +2243,24 @@ referencedClasses: []
 smalltalk.TimerWidget);
 
 smalltalk.addMethod(
+"_ranOutOfNoteTime",
+smalltalk.method({
+selector: "ranOutOfNoteTime",
+category: 'actions',
+fn: function (){
+var self=this;
+smalltalk.send(self,"_reset",[]);
+smalltalk.send(smalltalk.send(self,"_game",[]),"_wrongAnswerAction",[]);
+smalltalk.send(smalltalk.send(smalltalk.send(self,"_game",[]),"_sheetWidget",[]),"_nextNote",[]);
+return self},
+args: [],
+source: "ranOutOfNoteTime\x0a\x09self reset.\x0a    self game wrongAnswerAction.\x0a    self game sheetWidget nextNote.",
+messageSends: ["reset", "wrongAnswerAction", "game", "nextNote", "sheetWidget"],
+referencedClasses: []
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
 "_remainingGlobalSeconds",
 smalltalk.method({
 selector: "remainingGlobalSeconds",
@@ -2358,7 +2376,9 @@ $2=(function(){
 $3=(function(){
 smalltalk.send(self,"_updateSpans",[]);
 $4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
-if(! smalltalk.assert($4)){
+if(smalltalk.assert($4)){
+smalltalk.send(self,"_ranOutOfNoteTime",[]);
+} else {
 smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
 };
 $5=smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__lt_eq",[(0)]);
@@ -2374,8 +2394,8 @@ return smalltalk.send($3,"_valueWithTimeout_",[(1000)]);
 smalltalk.send($1,"_ifTrue_",[$2]);
 return self},
 args: [],
-source: "updateLoop\x0a\x09self isRunning \x0a    \x09ifTrue: [\x0a\x09\x09\x09[ self updateSpans.\x0a            self currentSecondsPerNote <= 0 \x0a        \x09\x09ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].\x0a            self remainingGlobalSeconds <= 0\x0a            \x09ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]\x0a              \x09ifTrue: [ self ranOutOfGlobalTime ].\x0a    \x09\x09self updateLoop ]\x0a    \x09\x09\x09\x09valueWithTimeout: 1000 ]",
-messageSends: ["ifTrue:", "valueWithTimeout:", "updateSpans", "ifFalse:", "currentSecondsPerNote:", "-", "currentSecondsPerNote", "<=", "ifFalse:ifTrue:", "remainingGlobalSeconds:", "remainingGlobalSeconds", "ranOutOfGlobalTime", "updateLoop", "isRunning"],
+source: "updateLoop\x0a\x09self isRunning \x0a    \x09ifTrue: [\x0a\x09\x09\x09[ self updateSpans.\x0a            self currentSecondsPerNote <= 0 \x0a        \x09\x09ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ]\x0a            \x09ifTrue: [ self ranOutOfNoteTime ].\x0a            self remainingGlobalSeconds <= 0\x0a            \x09ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]\x0a              \x09ifTrue: [ self ranOutOfGlobalTime ].\x0a    \x09\x09self updateLoop ]\x0a    \x09\x09\x09\x09valueWithTimeout: 1000 ]",
+messageSends: ["ifTrue:", "valueWithTimeout:", "updateSpans", "ifFalse:ifTrue:", "currentSecondsPerNote:", "-", "currentSecondsPerNote", "ranOutOfNoteTime", "<=", "remainingGlobalSeconds:", "remainingGlobalSeconds", "ranOutOfGlobalTime", "updateLoop", "isRunning"],
 referencedClasses: []
 }),
 smalltalk.TimerWidget);

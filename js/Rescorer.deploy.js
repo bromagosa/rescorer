@@ -1733,6 +1733,19 @@ return self}
 smalltalk.TimerWidget);
 
 smalltalk.addMethod(
+"_ranOutOfNoteTime",
+smalltalk.method({
+selector: "ranOutOfNoteTime",
+fn: function (){
+var self=this;
+smalltalk.send(self,"_reset",[]);
+smalltalk.send(smalltalk.send(self,"_game",[]),"_wrongAnswerAction",[]);
+smalltalk.send(smalltalk.send(smalltalk.send(self,"_game",[]),"_sheetWidget",[]),"_nextNote",[]);
+return self}
+}),
+smalltalk.TimerWidget);
+
+smalltalk.addMethod(
 "_remainingGlobalSeconds",
 smalltalk.method({
 selector: "remainingGlobalSeconds",
@@ -1817,7 +1830,9 @@ $2=(function(){
 $3=(function(){
 smalltalk.send(self,"_updateSpans",[]);
 $4=smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__lt_eq",[(0)]);
-if(! smalltalk.assert($4)){
+if(smalltalk.assert($4)){
+smalltalk.send(self,"_ranOutOfNoteTime",[]);
+} else {
 smalltalk.send(self,"_currentSecondsPerNote_",[smalltalk.send(smalltalk.send(self,"_currentSecondsPerNote",[]),"__minus",[(1)])]);
 };
 $5=smalltalk.send(smalltalk.send(self,"_remainingGlobalSeconds",[]),"__lt_eq",[(0)]);

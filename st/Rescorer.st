@@ -827,6 +827,12 @@ ranOutOfGlobalTime
     self game end.
 !
 
+ranOutOfNoteTime
+	self reset.
+    self game wrongAnswerAction.
+    self game sheetWidget nextNote.
+!
+
 reset
 	self currentSecondsPerNote: self secondsPerNote
 ! !
@@ -848,7 +854,8 @@ updateLoop
     	ifTrue: [
 			[ self updateSpans.
             self currentSecondsPerNote <= 0 
-        		ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ].
+        		ifFalse: [ self currentSecondsPerNote: self currentSecondsPerNote - 1 ]
+            	ifTrue: [ self ranOutOfNoteTime ].
             self remainingGlobalSeconds <= 0
             	ifFalse: [ self remainingGlobalSeconds: self remainingGlobalSeconds - 1 ]
               	ifTrue: [ self ranOutOfGlobalTime ].
