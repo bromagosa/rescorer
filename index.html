@@ -40,7 +40,7 @@
 	</div>
 	<script type='text/javascript'>
 			loadAmber({
-//				deploy: true,
+				deploy: true,
     			files: ['Rescorer.js'],
     			prefix: 'js',
 				ready: 
@@ -48,7 +48,7 @@
 						smalltalk.GameWidget._new()._appendToJQuery_(jQuery('body'));
 					}
 				});
-			$('.container').ready(function(){$('.loading').fadeOut(function(){$('.container').fadeIn()})});
+			$('.buttons-container').ready(function(){$('.loading').fadeOut(function(){$('.container').fadeIn()})});
 	</script> 
 	</body> 
 </html> 
