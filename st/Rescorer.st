@@ -326,8 +326,6 @@ renderDifficultySelectionStageOn: html
                 	self difficulty: 4.
                     self nextStage ].
 	self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.
-    '.loading' asJQuery fadeOut.
-    '.container' asJQuery fadeIn.
 	html with: stage.
 !
 

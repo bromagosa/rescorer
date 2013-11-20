@@ -692,13 +692,11 @@ smalltalk.send(self,"_difficulty_",[(4)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["A quin nivell de dificultat vols jugar?"]);
-smalltalk.send(smalltalk.send(".loading","_asJQuery",[]),"_fadeOut",[]);
-smalltalk.send(smalltalk.send(".container","_asJQuery",[]),"_fadeIn",[]);
 smalltalk.send(html,"_with_",[stage]);
 return self},
 args: ["html"],
-source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self difficulty: 4.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.\x0a    '.loading' asJQuery fadeOut.\x0a    '.container' asJQuery fadeIn.\x0a\x09html with: stage.\x0a",
-messageSends: ["new", "at:put:", "difficulty:", "nextStage", "buttons", "text:", "bubbleWidget", "fadeOut", "asJQuery", "fadeIn", "with:"],
+source: "renderDifficultySelectionStageOn: html\x0a\x09| stage |\x0a\x09stage := OptionSelectionWidget new.\x0a\x09stage buttons\x0a        \x09at: 'Principiant'\x0a            \x09put: [\x0a                \x09self difficulty: 1.\x0a            \x09\x09self nextStage ];\x0a\x09\x09\x09at: 'Iniciat'\x0a            \x09put: [\x0a                \x09self difficulty: 2.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Expert'\x0a            \x09put: [\x0a                \x09self difficulty: 3.\x0a                    self nextStage ];\x0a\x09\x09\x09at: 'Virtuós'\x0a            \x09put: [\x0a                \x09self difficulty: 4.\x0a                    self nextStage ].\x0a\x09self bubbleWidget text: 'A quin nivell de dificultat vols jugar?'.\x0a\x09html with: stage.\x0a",
+messageSends: ["new", "at:put:", "difficulty:", "nextStage", "buttons", "text:", "bubbleWidget", "with:"],
 referencedClasses: ["OptionSelectionWidget"]
 }),
 smalltalk.GameWidget);

@@ -38,15 +38,17 @@
 		</div>
 		<div class="bottom bar"></div>
 	</div>
-	<script type='text/javascript'>
+		<script type='text/javascript'>
 			loadAmber({
 				deploy: true,
     			files: ['Rescorer.js'],
     			prefix: 'js',
 				ready: 
 					function() {
-						smalltalk.GameWidget._new()._appendToJQuery_(jQuery('body'));
+						smalltalk.GameWidget._new()._appendToJQuery_(jQuery('.container'));
+						$('.loading').fadeOut(function(){$('.container').fadeIn()});
 					}
 				});
+		</script>
 	</body> 
 </html> 

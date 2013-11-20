@@ -531,8 +531,6 @@ smalltalk.send(self,"_difficulty_",[(4)]);
 return smalltalk.send(self,"_nextStage",[]);
 })]);
 smalltalk.send(smalltalk.send(self,"_bubbleWidget",[]),"_text_",["A quin nivell de dificultat vols jugar?"]);
-smalltalk.send(smalltalk.send(".loading","_asJQuery",[]),"_fadeOut",[]);
-smalltalk.send(smalltalk.send(".container","_asJQuery",[]),"_fadeIn",[]);
 smalltalk.send(html,"_with_",[stage]);
 return self}
 }),
