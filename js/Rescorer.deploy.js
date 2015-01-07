@@ -935,7 +935,7 @@ selector: "imagePath",
 fn: function (){
 var self=this;
 var $1;
-$1=smalltalk.send(smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversedString",[])]),"__comma",[smalltalk.send(self,"_extraSlashesString",[])]),"__comma",[".svg"]);
+$1=smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send("images/note","__comma",[smalltalk.send(self,"_slashedOrReversedString",[])]),"__comma",[smalltalk.send(self,"_extraSlashesString",[])]),"__comma",["-"]),"__comma",[smalltalk.send(smalltalk.send((3),"_atRandom",[]),"_asString",[])]),"__comma",[".svg"]);
 return $1;
 }
 }),

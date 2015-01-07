@@ -495,7 +495,7 @@ extraSlashesString
 !
 
 imagePath
-	^ 'images/note' , self slashedOrReversedString , self extraSlashesString , '.svg'
+	^ 'images/note' , self slashedOrReversedString , self extraSlashesString , '-' , 3 atRandom asString , '.svg'
 !
 
 slashedOrReversedString
